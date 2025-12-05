@@ -418,6 +418,11 @@ flowchart TD
     </div>
 
     <script>
+        // Backend API Configuration - Auto-detects production vs development
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000'
+            : ''; // Empty string means relative URLs (same domain)
+        
         // Global state
         let sessionId = localStorage.getItem('sessionId') || null;
         let fetchedSiteData = null;
@@ -675,7 +680,7 @@ flowchart TD
                 showNotification('Fetching site data from SleekCMS...', 'info');
                 console.log('[FETCH] Requesting data from SleekCMS API');
                 
-                const response = await fetch('http://localhost:3000/api/connect', {
+                const response = await fetch(`${API_BASE_URL}/api/connect`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pubToken })
@@ -809,7 +814,7 @@ flowchart TD
             const statusChecks = await Promise.all(
                 intents.map(async (intent) => {
                     try {
-                        const response = await fetch(`http://localhost:3000/api/page-status/${intent.id}`);
+                        const response = await fetch(`${API_BASE_URL}/api/page-status/${intent.id}`);
                         const data = await response.json();
                         return { intent, generated: data.generated };
                     } catch {
@@ -947,7 +952,7 @@ flowchart TD
             `;
             
             try {
-                const response = await fetch('http://localhost:3000/api/generate-page', {
+                const response = await fetch(`${API_BASE_URL}/api/generate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1059,7 +1064,7 @@ flowchart TD
             `;
             
             try {
-                const response = await fetch('http://localhost:3000/api/regenerate-page', {
+                const response = await fetch(`${API_BASE_URL}/api/regenerate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1125,7 +1130,7 @@ flowchart TD
             const statusChecks = await Promise.all(
                 intents.map(async (intent) => {
                     try {
-                        const response = await fetch(`http://localhost:3000/api/page-status/${intent.id}`);
+                        const response = await fetch(`${API_BASE_URL}/api/page-status/${intent.id}`);
                         const data = await response.json();
                         return { intent, generated: data.generated };
                     } catch {
@@ -1233,7 +1238,7 @@ flowchart TD
                 showNotification('Extracting relevant data from site structure...', 'info');
                 console.log('[PROCESS] Extracting data from path:', dataPath);
                 
-                const response = await fetch('http://localhost:3000/api/generate-page', {
+                const response = await fetch(`${API_BASE_URL}/api/generate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1322,7 +1327,7 @@ flowchart TD
                 showNotification('Sending regeneration request...', 'info');
                 console.log('[REQUEST] POST /api/regenerate-page');
                 
-                const response = await fetch('http://localhost:3000/api/regenerate-page', {
+                const response = await fetch(`${API_BASE_URL}/api/regenerate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1506,7 +1511,7 @@ flowchart TD
             }
             
             try {
-                const response = await fetch(`http://localhost:3000/api/page/${hash}`);
+                const response = await fetch(`${API_BASE_URL}/api/page/${hash}`);
                 
                 if (!response.ok) {
                     if (isDetailPage && parentIntentId) {
@@ -1669,7 +1674,7 @@ flowchart TD
                 showNotification('Searching for item in site data...', 'info');
                 console.log('[SEARCH] Searching for item in data structure');
                 
-                const response = await fetch('http://localhost:3000/api/generate-detail-page', {
+                const response = await fetch(`${API_BASE_URL}/api/generate-detail-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

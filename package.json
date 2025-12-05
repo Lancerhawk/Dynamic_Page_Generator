@@ -1,0 +1,11 @@
+{
+  "name": "dynamic-page-generator",
+  "version": "1.0.0",
+  "description": "Dynamic AI-powered page generator",
+  "scripts": {
+    "build": "cd backend && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
