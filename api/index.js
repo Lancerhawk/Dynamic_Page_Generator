@@ -1,26 +1,9 @@
 const path = require('path');
-const fs = require('fs');
 
 let app;
 try {
-  // Try to load from api/backend-dist first (for Vercel), then fall back to ../backend/dist
-  let serverPath;
-  const apiDistPath = path.join(__dirname, 'backend-dist/server');
-  const backendDistPath = path.join(__dirname, '../backend/dist/server');
-  
-  if (fs.existsSync(apiDistPath + '.js')) {
-    serverPath = apiDistPath;
-    console.log('Loading server from api/backend-dist (Vercel build)');
-  } else if (fs.existsSync(backendDistPath + '.js')) {
-    serverPath = backendDistPath;
-    console.log('Loading server from ../backend/dist (local dev)');
-  } else {
-    throw new Error(`Server file not found. Checked: ${apiDistPath}.js and ${backendDistPath}.js`);
-  }
-  
+  const serverPath = path.join(__dirname, '../backend/dist/server');
   console.log('Loading server from:', serverPath);
-  console.log('Current directory:', process.cwd());
-  console.log('__dirname:', __dirname);
   app = require(serverPath);
   console.log('Server loaded successfully');
 } catch (error) {
