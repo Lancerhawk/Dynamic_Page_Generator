@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Page Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default', themeVariables: { primaryColor: '#3b82f6', primaryTextColor: '#000', primaryBorderColor: '#2563eb', lineColor: '#64748b', secondaryColor: '#8b5cf6', tertiaryColor: '#e0f2f1' } });
+    </script>
     <style>
         ::-webkit-scrollbar {
             width: 8px;
@@ -23,43 +27,97 @@
             font-family: 'Code';
             src: local('Courier New'), local('Monaco'), local('Consolas'), monospace;
         }
+        @keyframes slide-in-right {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-out-right {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        .animate-slide-in-right {
+            animation: slide-in-right 0.3s ease-out;
+        }
+        .animate-slide-out-right {
+            animation: slide-out-right 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <div id="connect-screen" class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
+    <div id="connect-screen" class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+                <!-- Left Column: Connect Form -->
+                <div class="flex items-center">
+                    <div class="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                    </div>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Connect to Your Site</h1>
+                            <p class="text-gray-600 text-base">Enter your SleekCMS pub token to get started</p>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Connect to Your Site</h1>
-                <p class="text-gray-600 text-base">Enter your SleekCMS pub token to get started</p>
+                        
+                        <div class="mb-6">
+                            <p class="text-sm font-medium text-gray-700 mb-3">Try with sample tokens:</p>
+                            <div class="space-y-2">
+                                <button type="button" onclick="useToken('pub-1ez9p-e308d0f0c4fc4a81b1364d12882d609d')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                    <span class="font-mono text-xs">pub-1ez9p-...</span>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="useToken('pub-1ez9d-7f875d3ff6124d89b57f6a0f7764d14a')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                    <span class="font-mono text-xs">pub-1ez9d-...</span>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="useToken('pub-2z1l-67725a27587341019c159514e28e0451')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                    <span class="font-mono text-xs">pub-2z1l-...</span>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
             </div>
             
-            <form id="connect-form" class="space-y-6">
+                        <form id="connect-form" class="space-y-6">
                 <div>
-                    <label for="pub-token" class="block text-sm font-medium text-gray-700 mb-2">
-                        Pub Token
+                                <label for="pub-token" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Or enter your own Pub Token
                     </label>
                     <input
                         type="text"
                         id="pub-token"
                         name="pubToken"
                         placeholder="pub-1ez9p-xyz123"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
                         required
                     />
-                    <p class="mt-2 text-xs text-gray-500">You can find your pub token in your SleekCMS dashboard</p>
+                                <p class="mt-2 text-xs text-gray-500">You can find your pub token in your SleekCMS dashboard</p>
                 </div>
                 
                 <button
                     type="submit"
                     id="connect-button"
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                    <span id="connect-button-text">Connect</span>
+                                <span id="connect-button-text">Connect</span>
                     <span id="connect-button-loader" class="hidden inline-flex items-center">
                         <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -71,12 +129,215 @@
             </form>
             
             <div id="connect-error" class="mt-4 hidden">
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span id="error-message"></span>
+                            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span id="error-message"></span>
+                                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <!-- Right Column: Showcase/Documentation -->
+                <div class="flex items-start">
+                    <div class="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+                        <div class="prose prose-sm max-w-none">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Dynamic CMS Page Generator</h1>
+                            <p class="text-gray-600 text-lg mb-6">An AI-powered single-page application that generates beautiful pages on-demand from SleekCMS data.</p>
+                            
+                            <div class="mb-8">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-4">Key Features</h2>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">SleekCMS Integration</p>
+                                            <p class="text-sm text-gray-600">Connect using pub tokens to fetch website data</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">AI-Powered Generation</p>
+                                            <p class="text-sm text-gray-600">Uses Claude Haiku to generate beautiful pages on-demand</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Dynamic Theme Detection</p>
+                                            <p class="text-sm text-gray-600">Automatically extracts and applies theme colors from your site</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Hash-Based Routing</p>
+                                            <p class="text-sm text-gray-600">Single-page app with no page reloads</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">Intent-Based Pages</p>
+                                            <p class="text-sm text-gray-600">AI calculates intent cards from your data structure</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-4">How It Works</h2>
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-blue-500 pl-4">
+                                        <h3 class="font-semibold text-gray-900 mb-1">1. Connect</h3>
+                                        <p class="text-sm text-gray-600">Enter your SleekCMS pub token or use one of the sample tokens above</p>
+                                    </div>
+                                    <div class="border-l-4 border-purple-500 pl-4">
+                                        <h3 class="font-semibold text-gray-900 mb-1">2. AI Analysis</h3>
+                                        <p class="text-sm text-gray-600">The system fetches your site data and uses AI to calculate intent cards and detect theme colors</p>
+                                    </div>
+                                    <div class="border-l-4 border-indigo-500 pl-4">
+                                        <h3 class="font-semibold text-gray-900 mb-1">3. Generate Pages</h3>
+                                        <p class="text-sm text-gray-600">Click on any intent card to generate a beautiful, responsive page using AI</p>
+                                    </div>
+                                    <div class="border-l-4 border-green-500 pl-4">
+                                        <h3 class="font-semibold text-gray-900 mb-1">4. Explore</h3>
+                                        <p class="text-sm text-gray-600">Navigate between pages seamlessly without reloads, and explore detail pages for individual items</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-4">Data Flow Diagram</h2>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 overflow-x-auto">
+                                    <div class="mermaid">
+flowchart TD
+    Start([User Opens Application]) --> CheckSession{Session Exists?}
+    CheckSession -->|No| ConnectScreen[Connect Screen<br/>Enter Pub Token]
+    CheckSession -->|Yes| ValidateSession[Validate Session]
+    ValidateSession -->|Valid| Homepage
+    ValidateSession -->|Invalid| ConnectScreen
+    
+    ConnectScreen --> SubmitToken[User Submits Pub Token]
+    SubmitToken --> POSTConnect[POST /api/connect]
+    
+    POSTConnect --> FetchData[pub-token-fetcher.ts<br/>Fetch Site Data from SleekCMS]
+    FetchData --> SleekCMSAPI[SleekCMS API<br/>Returns JSON Data]
+    SleekCMSAPI --> ExtractHero[hero-extractor.ts<br/>Extract Title, Subtitle, Image]
+    ExtractHero --> ExtractTheme[theme-extractor.ts<br/>Try Manual Color Extraction]
+    ExtractTheme --> CheckColors{Colors Found?}
+    CheckColors -->|No| AIDetectTheme[ai-theme-detector.ts<br/>AI Detects Colors]
+    CheckColors -->|Yes| CalculateIntents
+    AIDetectTheme --> CalculateIntents[ai-intent-calculator.ts<br/>AI Calculates Intent Cards]
+    CalculateIntents --> ClaudeIntent[Claude AI<br/>Analyzes Data & Returns Intents]
+    ClaudeIntent --> CreateSession[Create Session<br/>Store in Memory]
+    CreateSession --> ReturnResponse[Return: sessionId, siteName,<br/>heroData, intents, themeColors]
+    ReturnResponse --> Homepage[Homepage Display<br/>Hero Section + Intent Cards Grid]
+    
+    Homepage --> UserClicks[User Clicks<br/>Generate Page Button]
+    UserClicks --> POSTGenerate[POST /api/generate-page]
+    POSTGenerate --> CheckPage{Page Exists?}
+    CheckPage -->|Yes| ReturnExisting[Return Existing Page]
+    CheckPage -->|No| ExtractData[intent-calculator.ts<br/>Extract Data by Path]
+    ExtractData --> GeneratePage[page-generator.ts<br/>Prepare AI Prompt]
+    GeneratePage --> ExtractImages[Extract All Images<br/>with Context]
+    ExtractImages --> CallClaude[Call Claude AI<br/>Generate HTML]
+    CallClaude --> ClaudePage[Claude AI<br/>Returns HTML]
+    ClaudePage --> PostProcess[Post-process HTML<br/>Remove Placeholders]
+    PostProcess --> StorePage[page-storage.ts<br/>Store in Memory]
+    StorePage --> ReturnSuccess[Return Success]
+    ReturnSuccess --> UpdateCard[Update Intent Card<br/>Show View Page Button]
+    ReturnExisting --> UpdateCard
+    
+    UpdateCard --> UserViews[User Clicks<br/>View Page Button]
+    UserViews --> HashChange[Hash Changes<br/>#intentId]
+    HashChange --> GETPage[GET /api/page/:intentId]
+    GETPage --> RetrievePage[page-storage.ts<br/>Retrieve HTML]
+    RetrievePage --> InjectHTML[Inject HTML into<br/>main element]
+    InjectHTML --> DisplayPage[Display Generated Page]
+    
+    DisplayPage --> UserClicksDetail[User Clicks<br/>View Full Details]
+    UserClicksDetail --> HashDetail[Hash Changes<br/>#intentId-detail-itemId]
+    HashDetail --> CheckDetail{Detail Page<br/>Exists?}
+    CheckDetail -->|No| POSTDetail[POST /api/generate-detail-page]
+    CheckDetail -->|Yes| GETDetail[GET /api/page/:detailPageId]
+    POSTDetail --> FindItem[Search for Item<br/>in Site Data]
+    FindItem --> GenerateDetail[detail-page-generator.ts<br/>Generate Detail Page]
+    GenerateDetail --> CallClaudeDetail[Call Claude AI<br/>Generate Detail HTML]
+    CallClaudeDetail --> StoreDetail[Store Detail Page]
+    StoreDetail --> GETDetail
+    GETDetail --> DisplayDetail[Display Detail Page]
+    
+    DisplayDetail --> BackButton[User Clicks Back]
+    DisplayPage --> BackButtonHome[User Clicks Back to Home]
+    BackButton --> DisplayPage
+    BackButtonHome --> Homepage
+    
+    style Start fill:#e1f5ff,stroke:#01579b,stroke-width:3px,color:#000
+    style ConnectScreen fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    style Homepage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    style POSTConnect fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+    style POSTGenerate fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+    style POSTDetail fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+    style GETPage fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+    style GETDetail fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+    style SleekCMSAPI fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    style ClaudeIntent fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    style ClaudePage fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    style CallClaudeDetail fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    style StorePage fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
+    style StoreDetail fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
+    style DisplayPage fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
+    style DisplayDetail fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
+    style CheckSession fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    style CheckColors fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    style CheckPage fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    style CheckDetail fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-4">Technical Stack</h2>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Express.js</span>
+                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">TypeScript</span>
+                                    <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">Tailwind CSS</span>
+                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Claude AI</span>
+                                    <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium">SleekCMS</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t border-gray-200 pt-6">
+                                <p class="text-sm text-gray-500">
+                                    This is a dynamic content system that generates pages on-demand. Pages are stored in server memory and persist for the session duration.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -121,16 +382,172 @@
         </main>
     </div>
 
+    <!-- Notification Container (Top Right) -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-sm flex flex-col"></div>
+
+    <!-- JSON Viewer Button (Bottom Right) -->
+    <button id="json-viewer-btn" class="fixed bottom-6 right-6 z-50 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-full p-4 shadow-lg transition-all duration-200 hover:shadow-xl hidden" onclick="showJsonViewer()">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+        </svg>
+    </button>
+
+    <!-- JSON Viewer Modal -->
+    <div id="json-viewer-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) hideJsonViewer()">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-900">Site Data JSON</h2>
+                <button onclick="hideJsonViewer()" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+                <pre id="json-content" class="text-sm text-gray-800 bg-gray-50 p-4 rounded-lg overflow-x-auto font-mono whitespace-pre-wrap break-words"></pre>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end gap-3">
+                <button onclick="hideJsonViewer()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
+                    Close
+                </button>
+                <button onclick="copyJsonToClipboard()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                    Copy to Clipboard
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global state
         let sessionId = localStorage.getItem('sessionId') || null;
+        let fetchedSiteData = null;
         let siteName = '';
         let intents = [];
         let themeColors = {};
         let heroData = {};
         let isGenerating = false;
         
-        // Check for existing session on page load
+        function useToken(token) {
+            const tokenInput = document.getElementById('pub-token');
+            if (tokenInput) {
+                tokenInput.value = token;
+                tokenInput.focus();
+            }
+        }
+
+        let activeNotifications = [];
+        const MAX_NOTIFICATIONS = 4;
+        const NOTIFICATION_DURATION = 2000;
+
+        function showNotification(message, type = 'info', duration = NOTIFICATION_DURATION) {
+            const container = document.getElementById('notification-container');
+            if (!container) return;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
+            if (activeNotifications.length >= MAX_NOTIFICATIONS) {
+                const oldestNotification = activeNotifications[0];
+                if (oldestNotification) {
+                    removeNotification(oldestNotification.id);
+                }
+            }
+            
+            const notificationId = 'notif-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
+            const icons = {
+                success: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>',
+                error: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>',
+                info: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>',
+                warning: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+            };
+
+            const colors = {
+                success: 'bg-green-50 border-green-200 text-green-800',
+                error: 'bg-red-50 border-red-200 text-red-800',
+                info: 'bg-blue-50 border-blue-200 text-blue-800',
+                warning: 'bg-yellow-50 border-yellow-200 text-yellow-800'
+            };
+
+            const notification = document.createElement('div');
+            notification.id = notificationId;
+            notification.className = `${colors[type]} border rounded-lg shadow-lg p-4 flex items-start space-x-3 mb-2 opacity-0 transform translate-x-full transition-all duration-300`;
+            notification.style.transform = 'translateX(100%)';
+            notification.innerHTML = `
+                <div class="flex-shrink-0 mt-0.5">
+                    ${icons[type]}
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+                <button onclick="removeNotification('${notificationId}')" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            `;
+
+            container.appendChild(notification);
+            
+            activeNotifications.push({ id: notificationId, element: notification, timestamp: Date.now() });
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            const timeoutId = setTimeout(() => {
+                removeNotification(notificationId);
+            }, duration);
+            
+            notification.dataset.timeoutId = timeoutId;
+        }
+
+        function removeNotification(id) {
+            const notification = document.getElementById(id);
+            if (!notification) return;
+            
+            const index = activeNotifications.findIndex(n => n.id === id);
+            if (index === -1) return;
+            
+            if (notification.dataset.timeoutId) {
+                clearTimeout(parseInt(notification.dataset.timeoutId));
+            }
+            
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            
+            setTimeout(() => {
+                notification.remove();
+                activeNotifications.splice(index, 1);
+            }, 300);
+        }
+
+        function showJsonViewer() {
+            const modal = document.getElementById('json-viewer-modal');
+            const content = document.getElementById('json-content');
+            
+            if (fetchedSiteData) {
+                content.textContent = JSON.stringify(fetchedSiteData, null, 2);
+                modal.classList.remove('hidden');
+            } else {
+                showNotification('No site data available', 'warning');
+            }
+        }
+
+        function hideJsonViewer() {
+            const modal = document.getElementById('json-viewer-modal');
+            modal.classList.add('hidden');
+        }
+
+        function copyJsonToClipboard() {
+            const content = document.getElementById('json-content').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                showNotification('JSON copied to clipboard', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy JSON', 'error');
+            });
+        }
+        
         async function checkExistingSession() {
             const storedSessionId = localStorage.getItem('sessionId');
             if (!storedSessionId) {
@@ -159,6 +576,11 @@
                 intents = data.intents;
                 themeColors = data.themeColors || {};
                 heroData = data.heroData || {};
+                
+                fetchedSiteData = data.siteData || data;
+                if (fetchedSiteData) {
+                    document.getElementById('json-viewer-btn').classList.remove('hidden');
+                }
                 
                 applyThemeColors(themeColors);
                 
@@ -242,16 +664,24 @@
             
             errorDiv.classList.add('hidden');
             
+            showNotification('Sending connection request...', 'info');
+            console.log('[REQUEST] POST /api/connect - Connecting with pub token');
+            
             connectButton.disabled = true;
             connectButtonText.classList.add('hidden');
             connectButtonLoader.classList.remove('hidden');
             
             try {
+                showNotification('Fetching site data from SleekCMS...', 'info');
+                console.log('[FETCH] Requesting data from SleekCMS API');
+                
                 const response = await fetch('http://localhost:3000/api/connect', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pubToken })
                 });
+                
+                console.log('[RESPONSE] Received response:', response.status, response.statusText);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -266,21 +696,51 @@
                 
                 const data = await response.json();
                 
+                console.log('[DATA] Site data received successfully');
+                console.log('[DATA] Site name:', data.siteName);
+                console.log('[DATA] Intents found:', data.intents?.length || 0);
+                console.log('[DATA] Full response:', data);
+                
+                showNotification('Site data received successfully', 'success');
+                
                 sessionId = data.sessionId;
                 siteName = data.siteName;
                 intents = data.intents;
                 themeColors = data.themeColors || {};
                 heroData = data.heroData || {};
                 
+                showNotification('Extracting site information...', 'info');
+                console.log('[PROCESS] Extracting hero data and theme colors');
+                
+                showNotification('Calculating intent cards with AI...', 'info');
+                console.log('[AI] Analyzing site data structure');
+                
                 localStorage.setItem('sessionId', sessionId);
                 
                 applyThemeColors(themeColors);
                 
+                showNotification('Session created successfully', 'success');
+                console.log('[SESSION] Session ID:', sessionId);
+                
+                fetchedSiteData = data.siteData || data;
+                document.getElementById('json-viewer-btn').classList.remove('hidden');
+                console.log('[STORAGE] Site data stored for JSON viewer');
+                console.log('[STORAGE] Data keys:', fetchedSiteData ? Object.keys(fetchedSiteData).slice(0, 10) : 'No data');
+                
                 document.getElementById('connect-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 
+                if (fetchedSiteData) {
+                    document.getElementById('json-viewer-btn').classList.remove('hidden');
+                }
+                
+                showNotification(`Connected to "${siteName}"`, 'success');
+                showNotification(`Found ${intents.length} intent cards`, 'info');
+                
                 renderHomepage();
             } catch (error) {
+                console.error('[ERROR] Connection failed:', error.message);
+                showNotification(`Connection failed: ${error.message}`, 'error');
                 errorMessage.textContent = error.message;
                 errorDiv.classList.remove('hidden');
             } finally {
@@ -736,7 +1196,14 @@
             
             isGenerating = true;
             
-            // Disable all intent cards
+            const intent = intents.find(i => i.id === intentId);
+            const intentTitle = intent?.title || intentId;
+            
+            showNotification(`Starting page generation for "${intentTitle}"...`, 'info');
+            console.log('[GENERATE] Starting page generation from explore section');
+            console.log('[GENERATE] Intent ID:', intentId);
+            console.log('[GENERATE] Data Path:', dataPath);
+            
             disableAllIntentCards();
             
             const actionDiv = document.getElementById(`page-action-${intentId}`);
@@ -760,6 +1227,12 @@
             `;
             
             try {
+                showNotification('Sending generation request to server...', 'info');
+                console.log('[REQUEST] POST /api/generate-page');
+                
+                showNotification('Extracting relevant data from site structure...', 'info');
+                console.log('[PROCESS] Extracting data from path:', dataPath);
+                
                 const response = await fetch('http://localhost:3000/api/generate-page', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -769,6 +1242,8 @@
                         dataPath
                     })
                 });
+                
+                console.log('[RESPONSE] Received response:', response.status);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -782,6 +1257,16 @@
                 }
                 
                 const data = await response.json();
+                
+                showNotification('Preparing AI prompt with data and images...', 'info');
+                console.log('[AI] Preparing prompt for Claude AI');
+                
+                showNotification('Calling Claude AI to generate page...', 'info');
+                console.log('[AI] Requesting HTML generation from Claude');
+                
+                showNotification('Page generated successfully!', 'success');
+                console.log('[SUCCESS] Page generated and stored');
+                console.log('[STORAGE] Page stored with ID:', intentId);
                 
                 const primaryColor = themeColors.primary || '#3b82f6';
                 const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
@@ -798,6 +1283,8 @@
                     </div>
                 `;
             } catch (error) {
+                console.error('[ERROR] Page generation failed:', error.message);
+                showNotification(`Page generation failed: ${error.message}`, 'error');
                 actionDiv.innerHTML = `
                     <div class="text-red-600 text-sm p-2">
                         Error: ${error.message}
@@ -813,6 +1300,13 @@
             const actionDiv = document.getElementById(`page-action-${intentId}`);
             if (!actionDiv) return;
             
+            const intent = intents.find(i => i.id === intentId);
+            const intentTitle = intent?.title || intentId;
+            
+            showNotification(`Regenerating page for "${intentTitle}"...`, 'info');
+            console.log('[REGENERATE] Starting page regeneration from explore section');
+            console.log('[REGENERATE] Intent ID:', intentId);
+            
             const originalHTML = actionDiv.innerHTML;
             actionDiv.innerHTML = `
                 <div class="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">
@@ -825,6 +1319,9 @@
             `;
             
             try {
+                showNotification('Sending regeneration request...', 'info');
+                console.log('[REQUEST] POST /api/regenerate-page');
+                
                 const response = await fetch('http://localhost:3000/api/regenerate-page', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -834,6 +1331,8 @@
                         dataPath
                     })
                 });
+                
+                console.log('[RESPONSE] Received response:', response.status);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -848,7 +1347,12 @@
                 
                 const data = await response.json();
                 
-                // Reload the current page if we're viewing it
+                showNotification('Regenerating page with AI...', 'info');
+                console.log('[AI] Regenerating HTML with Claude AI');
+                
+                showNotification('Page regenerated successfully!', 'success');
+                console.log('[SUCCESS] Page regenerated and stored');
+                
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash === intentId) {
                     window.location.hash = '';
@@ -857,9 +1361,10 @@
                     }, 100);
                 }
                 
-                // Restore button
                 actionDiv.innerHTML = originalHTML;
             } catch (error) {
+                console.error('[ERROR] Page regeneration failed:', error.message);
+                showNotification(`Regeneration failed: ${error.message}`, 'error');
                 actionDiv.innerHTML = `
                     <div class="text-red-600 text-sm p-2">
                         Error: ${error.message}
@@ -941,14 +1446,21 @@
             themeColors = {};
             heroData = {};
             isGenerating = false;
+            fetchedSiteData = null;
             
             localStorage.removeItem('sessionId');
+            
+            document.getElementById('json-viewer-btn').classList.add('hidden');
+            fetchedSiteData = null;
             
             window.location.hash = '';
             document.getElementById('connect-screen').classList.remove('hidden');
             document.getElementById('app-screen').classList.add('hidden');
             
             document.getElementById('pub-token').value = '';
+            
+            showNotification('Disconnected successfully', 'info');
+            console.log('[DISCONNECT] Session cleared');
         };
         
         async function handleHashChange() {
@@ -1035,7 +1547,13 @@
                 
                 const data = await response.json();
                 
-                // Inject HTML into main content
+                if (isDetailPage) {
+                    showNotification('Detail page loaded successfully', 'success');
+                } else {
+                    showNotification('Page loaded successfully', 'success');
+                }
+                console.log('[SUCCESS] Page HTML retrieved');
+                
                 mainContent.innerHTML = data.html;
                 
                 // Store parent intent ID for back navigation on detail pages
@@ -1142,8 +1660,15 @@
             if (isGenerating) return;
             isGenerating = true;
             
+            showNotification(`Generating detail page for item...`, 'info');
+            console.log('[DETAIL] Starting detail page generation');
+            console.log('[DETAIL] Intent ID:', intentId);
+            console.log('[DETAIL] Item ID:', itemId);
+            
             try {
-                // Backend will extract item data from fullSiteData
+                showNotification('Searching for item in site data...', 'info');
+                console.log('[SEARCH] Searching for item in data structure');
+                
                 const response = await fetch('http://localhost:3000/api/generate-detail-page', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1154,6 +1679,8 @@
                         itemData: {}
                     })
                 });
+                
+                console.log('[RESPONSE] Received response:', response.status);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -1168,9 +1695,15 @@
                 
                 const data = await response.json();
                 
+                showNotification('Item found, generating detail page with AI...', 'info');
+                console.log('[AI] Generating detail page HTML with Claude AI');
+                
+                showNotification('Detail page generated successfully!', 'success');
+                console.log('[SUCCESS] Detail page generated and stored');
+                console.log('[STORAGE] Detail page ID:', data.detailPageId);
+                
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash === data.detailPageId) {
-                    // Force reload by triggering hash change
                     window.location.hash = '';
                     setTimeout(() => {
                         window.location.hash = data.detailPageId;
@@ -1179,7 +1712,8 @@
                     window.location.hash = data.detailPageId;
                 }
             } catch (error) {
-                console.error('Error generating detail page:', error);
+                console.error('[ERROR] Detail page generation failed:', error.message);
+                showNotification(`Detail page generation failed: ${error.message}`, 'error');
                 const mainContent = document.getElementById('main-content');
                 if (mainContent) {
                     const parts = window.location.hash.replace('#', '').split('-detail-');
@@ -1212,4 +1746,3 @@
     </script>
 </body>
 </html>
-

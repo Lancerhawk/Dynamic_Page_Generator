@@ -15,4 +15,3 @@ export function getPage(intentId: string): string | null {
 export function clearAllPages(): void {
   pageStore.clear();
 }
-

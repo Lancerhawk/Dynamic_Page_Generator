@@ -66,6 +66,7 @@ app.post("/api/connect", async (req, res) => {
       heroData,
       intents,
       themeColors,
+      siteData,
       message: "Connected successfully"
     });
   } catch (error: any) {
