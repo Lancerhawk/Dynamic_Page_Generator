@@ -1,0 +1,9 @@
+# Exclude HTML from language statistics
+frontend/index.html linguist-documentation
+
+# Mark compiled JavaScript as generated (optional, but good practice)
+backend/dist/* linguist-generated=true
+
+# Ensure TypeScript files are counted
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
