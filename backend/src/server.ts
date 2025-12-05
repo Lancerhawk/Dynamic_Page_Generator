@@ -12,7 +12,7 @@ import { extractThemeColors } from "./theme-extractor";
 import { detectThemeColorsWithAI } from "./ai-theme-detector";
 import { extractHeroData } from "./hero-extractor";
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   dotenv.config({ path: path.join(__dirname, "../.env") });
 }
 
@@ -609,11 +609,23 @@ app.get("/api/page/:intentId", (req, res) => {
   }
 });
 
-const frontendPath = path.join(__dirname, "../../frontend");
+let frontendPath: string;
+if (process.env.VERCEL) {
+  frontendPath = path.join(process.cwd(), "frontend");
+} else {
+  frontendPath = path.join(__dirname, "../../frontend");
+}
+
 app.use(express.static(frontendPath));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
+  const indexPath = path.join(frontendPath, "index.html");
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error("Error sending index.html:", err);
+      res.status(404).json({ error: "Frontend file not found" });
+    }
+  });
 });
 
 if (require.main === module) {
