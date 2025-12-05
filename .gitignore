@@ -3,8 +3,6 @@ node_modules/
 backend/node_modules/
 
 # Build outputs
-backend/dist/
-api/backend-dist/
 *.log
 
 # Environment variables
@@ -22,4 +20,3 @@ api/backend-dist/
 # OS
 .DS_Store
 Thumbs.db
-
