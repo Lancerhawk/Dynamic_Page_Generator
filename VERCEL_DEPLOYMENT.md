@@ -69,8 +69,10 @@ Deploy both **frontend** and **backend** to Vercel in one deployment. No payment
    
    **Install Command**: 
    ```bash
-   cd backend && npm install
+   npm install
    ```
+   
+   **Important**: Make sure the build command runs BEFORE deployment. The `backend/dist` folder must exist for the serverless function to work.
 
 4. **Add Environment Variables**:
    Click **"Environment Variables"** and add:
