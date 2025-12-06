@@ -12,6 +12,7 @@ exports.deleteThemeColors = deleteThemeColors;
 exports.clearSession = clearSession;
 // Session storage using Redis in production, in-memory Map in development
 let kv = null;
+let redisConnected = false;
 // Try to initialize Redis if available
 try {
     // Check for REDIS_URL (Vercel Redis) or KV_REST_API_URL (Vercel KV)
@@ -55,23 +56,29 @@ try {
             // Handle connection events
             kv.on('connect', () => {
                 console.log('✅ Redis client connected');
+                redisConnected = true;
             });
             kv.on('ready', () => {
                 console.log('✅ Redis client ready');
+                redisConnected = true;
             });
             kv.on('error', (err) => {
                 console.error('❌ Redis connection error:', err.message);
                 console.error('❌ Redis error stack:', err.stack);
+                redisConnected = false;
             });
             kv.on('close', () => {
                 console.log('⚠️ Redis connection closed');
+                redisConnected = false;
             });
-            // Test connection immediately
+            // Test connection (async, don't block initialization)
             kv.ping().then((result) => {
                 console.log('✅ Redis PING successful:', result);
+                redisConnected = true;
             }).catch((err) => {
                 console.error('❌ Redis PING failed:', err.message);
                 console.error('❌ Redis PING error stack:', err.stack);
+                redisConnected = false;
             });
         }
         catch (error) {
@@ -106,6 +113,18 @@ try {
     }
     if (!kv) {
         console.log('ℹ️ No Redis/KV connection available, using in-memory storage');
+        redisConnected = false;
+    }
+    else {
+        // For ioredis, check status
+        if (kv.status === 'ready' || kv.status === 'connect') {
+            redisConnected = true;
+            console.log('✅ Redis status check: ready/connected');
+        }
+        else {
+            console.log('⚠️ Redis status:', kv.status, '- will check on first use');
+            // Will be set by event handlers
+        }
     }
 }
 catch (error) {
@@ -119,8 +138,32 @@ const memoryThemeStore = new Map();
 const SESSION_TTL = 60 * 60 * 24; // 24 hours in seconds
 async function setSession(sessionId, siteData) {
     const key = `session:${sessionId}`;
-    console.log('[setSession] Storing session:', key, 'Using:', kv ? 'Redis/KV' : 'Memory');
+    // Check Redis connection status
+    let usingRedis = false;
     if (kv) {
+        // For ioredis, check status
+        if (kv.status === 'ready' || kv.status === 'connect') {
+            redisConnected = true;
+            usingRedis = true;
+        }
+        else if (redisConnected) {
+            usingRedis = true;
+        }
+        else {
+            // Try to verify connection
+            try {
+                await kv.ping();
+                redisConnected = true;
+                usingRedis = true;
+            }
+            catch {
+                redisConnected = false;
+                usingRedis = false;
+            }
+        }
+    }
+    console.log('[setSession] Storing session:', key, 'Using:', usingRedis ? 'Redis/KV' : 'Memory', 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status);
+    if (usingRedis) {
         try {
             // ioredis uses 'EX' as third parameter, @vercel/kv uses { ex: ttl }
             if (kv.set && typeof kv.set === 'function') {
@@ -154,8 +197,32 @@ async function setSession(sessionId, siteData) {
 }
 async function getSession(sessionId) {
     const key = `session:${sessionId}`;
-    console.log('[getSession] Fetching:', key, 'Using:', kv ? 'Redis/KV' : 'Memory');
+    // Check Redis connection status
+    let usingRedis = false;
     if (kv) {
+        // For ioredis, check status
+        if (kv.status === 'ready' || kv.status === 'connect') {
+            redisConnected = true;
+            usingRedis = true;
+        }
+        else if (redisConnected) {
+            usingRedis = true;
+        }
+        else {
+            // Try to verify connection
+            try {
+                await kv.ping();
+                redisConnected = true;
+                usingRedis = true;
+            }
+            catch {
+                redisConnected = false;
+                usingRedis = false;
+            }
+        }
+    }
+    console.log('[getSession] Fetching:', key, 'Using:', usingRedis ? 'Redis/KV' : 'Memory', 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status);
+    if (usingRedis) {
         try {
             const data = await kv.get(key);
             console.log('[getSession] Redis get result:', data ? 'Found data' : 'No data', typeof data);
