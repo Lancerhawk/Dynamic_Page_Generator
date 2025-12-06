@@ -39,7 +39,7 @@ COMPREHENSIVE DETAIL DISPLAY MANDATE:
         const imageFields = ['url', 'image', 'image_url', 'photo', 'photo_url', 'src', 'thumbnail', 'thumbnail_url', 'imageUrl', 'imageSrc'];
         for (const [key, value] of Object.entries(obj)) {
             if (key === '_context')
-                continue; // Skip context object
+                continue;
             if (imageFields.includes(key.toLowerCase()) && typeof value === 'string' && value.match(/\.(jpg|jpeg|png|gif|webp|svg)/i)) {
                 imageUrls.push(value);
             }

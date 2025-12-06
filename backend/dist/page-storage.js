@@ -3,19 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.storePage = storePage;
 exports.getPage = getPage;
 exports.clearAllPages = clearAllPages;
-// Page storage using Redis in production, in-memory Map in development
 let redisClient = null;
 let redisConnected = false;
 let redisInitializing = false;
 let redisInitPromise = null;
-// Initialize Redis connection (async) - same pattern as session-storage
 async function initializeRedis() {
     if (redisInitPromise) {
         return redisInitPromise;
     }
     redisInitPromise = (async () => {
         if (redisInitializing || redisClient) {
-            return; // Already initializing or initialized
+            return;
         }
         redisInitializing = true;
         try {
@@ -24,17 +22,13 @@ async function initializeRedis() {
             console.log('[Page Storage] REDIS_URL:', redisUrl ? '✅ Set' : '❌ Not set');
             if (redisUrl) {
                 try {
-                    // Try to require ioredis - check if it's available
-                    // First try global (set by api/index.js), then try require
                     let Redis;
                     try {
-                        // Try global first (set by api/index.js for Vercel)
                         if (typeof global !== 'undefined' && global.ioredis) {
                             Redis = global.ioredis;
                             console.log('[Page Storage] 📦 ioredis loaded from global (Vercel bundled)');
                         }
                         else {
-                            // Fallback to normal require
                             Redis = require('ioredis');
                             console.log('[Page Storage] 📦 ioredis module loaded via require');
                         }
@@ -84,7 +78,6 @@ async function initializeRedis() {
                         console.log('[Page Storage] ⚠️ Redis connection closed');
                         redisConnected = false;
                     });
-                    // Wait for connection with timeout
                     await Promise.race([
                         redisClient.ping(),
                         new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connection timeout')), 5000))
@@ -115,35 +108,28 @@ async function initializeRedis() {
     })();
     return redisInitPromise;
 }
-// CRITICAL: Initialize Redis immediately at module load
 initializeRedis().catch(err => {
     console.error('[Page Storage] Failed to initialize Redis at module load:', err);
 });
-// Fallback to in-memory storage
 const memoryPageStore = new Map();
-const PAGE_TTL = 60 * 60 * 24; // 24 hours in seconds
+const PAGE_TTL = 60 * 60 * 24;
 async function storePage(intentId, html) {
-    // Ensure Redis is initialized
     await initializeRedis();
     const key = `page:${intentId}`;
     const pageData = {
         html,
         timestamp: Date.now()
     };
-    // Check actual Redis connection status (not just flag)
     const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
     console.log('[storePage] Storing page:', key, 'redisClient exists:', !!redisClient, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
-    // ALWAYS write to memory as backup (even if Redis is available)
     memoryPageStore.set(intentId, pageData);
     console.log('[storePage] Stored in memory as backup');
-    // Also write to Redis if available - try even if flag says no (connection might be ready)
     if (redisClient && isRedisReady) {
         try {
-            // Verify connection with ping first
             await redisClient.ping();
             const result = await redisClient.set(key, JSON.stringify(pageData), 'EX', PAGE_TTL);
             console.log('[storePage] Redis set result:', result);
-            redisConnected = true; // Update flag on success
+            redisConnected = true;
         }
         catch (error) {
             console.error('[storePage] Redis error:', error.message);
@@ -156,25 +142,20 @@ async function storePage(intentId, html) {
     }
 }
 async function getPage(intentId) {
-    // Ensure Redis is initialized
     await initializeRedis();
     const key = `page:${intentId}`;
-    // Check actual Redis connection status (not just flag)
     const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
     console.log('[getPage] Fetching page:', key, 'redisClient exists:', !!redisClient, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
-    // Try Redis first if available - try even if flag says no (connection might be ready)
     if (redisClient && isRedisReady) {
         try {
-            // Verify connection with ping first
             await redisClient.ping();
             const data = await redisClient.get(key);
             console.log('[getPage] Redis get result:', data ? 'Found data' : 'No data');
             if (data) {
                 const pageData = typeof data === 'string' ? JSON.parse(data) : data;
                 console.log('[getPage] Parsed successfully from Redis');
-                // Also update memory cache
                 memoryPageStore.set(intentId, pageData);
-                redisConnected = true; // Update flag on success
+                redisConnected = true;
                 return pageData.html;
             }
         }
@@ -183,7 +164,6 @@ async function getPage(intentId) {
             redisConnected = false;
         }
     }
-    // Fallback to memory
     const memoryData = memoryPageStore.get(intentId);
     console.log('[getPage] Memory result:', memoryData ? 'Found' : 'Not found');
     return memoryData ? memoryData.html : null;
@@ -192,15 +172,12 @@ async function clearAllPages() {
     await initializeRedis();
     if (redisClient && redisConnected) {
         try {
-            // Note: We can't easily delete all pages in Redis without tracking keys
-            // Pages will expire on their own with TTL
             console.log('[clearAllPages] Redis: Pages will expire with TTL');
         }
         catch (error) {
             console.error('[clearAllPages] Redis error:', error.message);
         }
     }
-    // Always clear memory
     memoryPageStore.clear();
     console.log('[clearAllPages] Memory cleared');
 }

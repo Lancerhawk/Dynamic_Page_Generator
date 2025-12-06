@@ -71,7 +71,7 @@ DETAIL PAGE BUTTONS (CRITICAL - MUST ADD THESE):
     }
     
     for (const [key, value] of Object.entries(obj)) {
-      if (key === '_context') continue; // Skip context object
+      if (key === '_context') continue;
       
       if (imageFields.includes(key.toLowerCase()) && typeof value === 'string' && value.match(/\.(jpg|jpeg|png|gif|webp|svg)/i)) {
         const currentItemName = itemName || obj.name || obj.title || obj.dish_name || obj.property_name || path.split('.').pop() || 'Unknown';
@@ -298,7 +298,7 @@ Return ONLY the HTML content for the <main> section.`;
 
   const msg = await client.messages.create({
     model: model,
-    max_tokens: 4096, // Keep within token limit
+    max_tokens: 4096,
     temperature: 0.4,
     system: systemPrompt,
     messages: [

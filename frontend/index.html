@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,181 +14,219 @@
         ::-webkit-scrollbar {
             width: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #1e293b;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #475569;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #64748b;
         }
+
         @font-face {
             font-family: 'Code';
             src: local('Courier New'), local('Monaco'), local('Consolas'), monospace;
         }
+
         @keyframes slide-in-right {
             from {
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
             }
         }
+
         @keyframes slide-out-right {
             from {
                 transform: translateX(0);
                 opacity: 1;
             }
+
             to {
                 transform: translateX(100%);
                 opacity: 0;
             }
         }
+
         .animate-slide-in-right {
             animation: slide-in-right 0.3s ease-out;
         }
+
         .animate-slide-out-right {
             animation: slide-out-right 0.3s ease-out;
         }
     </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen">
     <div id="connect-screen" class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div class="container mx-auto px-4 py-8">
             <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-                <!-- Left Column: Connect Form -->
                 <div class="flex items-center">
                     <div class="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-            <div class="text-center mb-8">
-                            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
+                        <div class="text-center mb-8">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
-                    </div>
+                            </div>
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">Connect to Your Site</h1>
                             <p class="text-gray-600 text-base">Enter your SleekCMS pub token to get started</p>
-                </div>
-                        
+                        </div>
+
                         <div class="mb-6">
                             <p class="text-sm font-medium text-gray-700 mb-3">Try with sample tokens:</p>
                             <div class="space-y-2">
-                                <button type="button" onclick="useToken('pub-1ez9p-e308d0f0c4fc4a81b1364d12882d609d')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                <button type="button" onclick="useToken('pub-1ez9p-e308d0f0c4fc4a81b1364d12882d609d')"
+                                    class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
                                     <span class="font-mono text-xs">pub-1ez9p-...</span>
-                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </button>
-                                <button type="button" onclick="useToken('pub-1ez9d-7f875d3ff6124d89b57f6a0f7764d14a')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                <button type="button" onclick="useToken('pub-1ez9d-7f875d3ff6124d89b57f6a0f7764d14a')"
+                                    class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
                                     <span class="font-mono text-xs">pub-1ez9d-...</span>
-                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </button>
-                                <button type="button" onclick="useToken('pub-2z1l-67725a27587341019c159514e28e0451')" class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
+                                <button type="button" onclick="useToken('pub-2z1l-67725a27587341019c159514e28e0451')"
+                                    class="w-full text-left px-4 py-2 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg transition text-sm text-gray-700 hover:text-blue-700 flex items-center justify-between group">
                                     <span class="font-mono text-xs">pub-2z1l-...</span>
-                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </button>
                             </div>
-            </div>
-            
+                        </div>
+
                         <form id="connect-form" class="space-y-6">
-                <div>
+                            <div>
                                 <label for="pub-token" class="block text-sm font-medium text-gray-700 mb-2">
                                     Or enter your own Pub Token
-                    </label>
-                    <input
-                        type="text"
-                        id="pub-token"
-                        name="pubToken"
-                        placeholder="pub-1ez9p-xyz123"
+                                </label>
+                                <input type="text" id="pub-token" name="pubToken" placeholder="pub-1ez9p-xyz123"
                                     class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm"
-                        required
-                    />
-                                <p class="mt-2 text-xs text-gray-500">You can find your pub token in your SleekCMS dashboard</p>
-                </div>
-                
-                <button
-                    type="submit"
-                    id="connect-button"
-                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                >
+                                    required />
+                                <p class="mt-2 text-xs text-gray-500">You can find your pub token in your SleekCMS
+                                    dashboard</p>
+                            </div>
+
+                            <button type="submit" id="connect-button"
+                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                                 <span id="connect-button-text">Connect</span>
-                    <span id="connect-button-loader" class="hidden inline-flex items-center">
-                        <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Connecting...
-                    </span>
-                </button>
-            </form>
-            
-            <div id="connect-error" class="mt-4 hidden">
+                                <span id="connect-button-loader" class="hidden inline-flex items-center">
+                                    <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    Connecting...
+                                </span>
+                            </button>
+                        </form>
+
+                        <div id="connect-error" class="mt-4 hidden">
                             <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                            clip-rule="evenodd"></path>
                                     </svg>
                                     <span id="error-message"></span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-                <!-- Right Column: Showcase/Documentation -->
                 <div class="flex items-start">
-                    <div class="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+                    <div
+                        class="w-full bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
                         <div class="prose prose-sm max-w-none">
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">Dynamic CMS Page Generator</h1>
-                            <p class="text-gray-600 text-lg mb-6">An AI-powered single-page application that generates beautiful pages on-demand from SleekCMS data.</p>
-                            
+                            <p class="text-gray-600 text-lg mb-6">An AI-powered single-page application that generates
+                                beautiful pages on-demand from SleekCMS data.</p>
+
                             <div class="mb-8">
                                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Key Features</h2>
                                 <div class="grid grid-cols-1 gap-3">
                                     <div class="flex items-start space-x-3">
-                                        <div class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
                                             <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
                                         </div>
                                         <div>
                                             <p class="font-medium text-gray-900">SleekCMS Integration</p>
-                                            <p class="text-sm text-gray-600">Connect using pub tokens to fetch website data</p>
+                                            <p class="text-sm text-gray-600">Connect using pub tokens to fetch website
+                                                data</p>
                                         </div>
                                     </div>
                                     <div class="flex items-start space-x-3">
-                                        <div class="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
-                                            <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-purple-600" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
                                         </div>
                                         <div>
                                             <p class="font-medium text-gray-900">AI-Powered Generation</p>
-                                            <p class="text-sm text-gray-600">Uses Claude Haiku to generate beautiful pages on-demand</p>
+                                            <p class="text-sm text-gray-600">Uses Claude Haiku to generate beautiful
+                                                pages on-demand</p>
                                         </div>
                                     </div>
                                     <div class="flex items-start space-x-3">
-                                        <div class="flex-shrink-0 w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center mt-0.5">
-                                            <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg class="w-4 h-4 text-indigo-600" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
                                         </div>
                                         <div>
                                             <p class="font-medium text-gray-900">Dynamic Theme Detection</p>
-                                            <p class="text-sm text-gray-600">Automatically extracts and applies theme colors from your site</p>
+                                            <p class="text-sm text-gray-600">Automatically extracts and applies theme
+                                                colors from your site</p>
                                         </div>
                                     </div>
                                     <div class="flex items-start space-x-3">
-                                        <div class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
                                             <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
                                         </div>
                                         <div>
@@ -196,145 +235,168 @@
                                         </div>
                                     </div>
                                     <div class="flex items-start space-x-3">
-                                        <div class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center mt-0.5">
+                                        <div
+                                            class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center mt-0.5">
                                             <svg class="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd"></path>
                                             </svg>
                                         </div>
                                         <div>
                                             <p class="font-medium text-gray-900">Intent-Based Pages</p>
-                                            <p class="text-sm text-gray-600">AI calculates intent cards from your data structure</p>
+                                            <p class="text-sm text-gray-600">AI calculates intent cards from your data
+                                                structure</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-8">
                                 <h2 class="text-xl font-semibold text-gray-900 mb-4">How It Works</h2>
                                 <div class="space-y-4">
                                     <div class="border-l-4 border-blue-500 pl-4">
                                         <h3 class="font-semibold text-gray-900 mb-1">1. Connect</h3>
-                                        <p class="text-sm text-gray-600">Enter your SleekCMS pub token or use one of the sample tokens above</p>
+                                        <p class="text-sm text-gray-600">Enter your SleekCMS pub token or use one of the
+                                            sample tokens above</p>
                                     </div>
                                     <div class="border-l-4 border-purple-500 pl-4">
                                         <h3 class="font-semibold text-gray-900 mb-1">2. AI Analysis</h3>
-                                        <p class="text-sm text-gray-600">The system fetches your site data and uses AI to calculate intent cards and detect theme colors</p>
+                                        <p class="text-sm text-gray-600">The system fetches your site data and uses AI
+                                            to calculate intent cards and detect theme colors</p>
                                     </div>
                                     <div class="border-l-4 border-indigo-500 pl-4">
                                         <h3 class="font-semibold text-gray-900 mb-1">3. Generate Pages</h3>
-                                        <p class="text-sm text-gray-600">Click on any intent card to generate a beautiful, responsive page using AI</p>
+                                        <p class="text-sm text-gray-600">Click on any intent card to generate a
+                                            beautiful, responsive page using AI</p>
                                     </div>
                                     <div class="border-l-4 border-green-500 pl-4">
                                         <h3 class="font-semibold text-gray-900 mb-1">4. Explore</h3>
-                                        <p class="text-sm text-gray-600">Navigate between pages seamlessly without reloads, and explore detail pages for individual items</p>
+                                        <p class="text-sm text-gray-600">Navigate between pages seamlessly without
+                                            reloads, and explore detail pages for individual items</p>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-8">
                                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Data Flow Diagram</h2>
                                 <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 overflow-x-auto">
                                     <div class="mermaid">
-flowchart TD
-    Start([User Opens Application]) --> CheckSession{Session Exists?}
-    CheckSession -->|No| ConnectScreen[Connect Screen<br/>Enter Pub Token]
-    CheckSession -->|Yes| ValidateSession[Validate Session]
-    ValidateSession -->|Valid| Homepage
-    ValidateSession -->|Invalid| ConnectScreen
-    
-    ConnectScreen --> SubmitToken[User Submits Pub Token]
-    SubmitToken --> POSTConnect[POST /api/connect]
-    
-    POSTConnect --> FetchData[pub-token-fetcher.ts<br/>Fetch Site Data from SleekCMS]
-    FetchData --> SleekCMSAPI[SleekCMS API<br/>Returns JSON Data]
-    SleekCMSAPI --> ExtractHero[hero-extractor.ts<br/>Extract Title, Subtitle, Image]
-    ExtractHero --> ExtractTheme[theme-extractor.ts<br/>Try Manual Color Extraction]
-    ExtractTheme --> CheckColors{Colors Found?}
-    CheckColors -->|No| AIDetectTheme[ai-theme-detector.ts<br/>AI Detects Colors]
-    CheckColors -->|Yes| CalculateIntents
-    AIDetectTheme --> CalculateIntents[ai-intent-calculator.ts<br/>AI Calculates Intent Cards]
-    CalculateIntents --> ClaudeIntent[Claude AI<br/>Analyzes Data & Returns Intents]
-    ClaudeIntent --> CreateSession[Create Session<br/>Store in Memory]
-    CreateSession --> ReturnResponse[Return: sessionId, siteName,<br/>heroData, intents, themeColors]
-    ReturnResponse --> Homepage[Homepage Display<br/>Hero Section + Intent Cards Grid]
-    
-    Homepage --> UserClicks[User Clicks<br/>Generate Page Button]
-    UserClicks --> POSTGenerate[POST /api/generate-page]
-    POSTGenerate --> CheckPage{Page Exists?}
-    CheckPage -->|Yes| ReturnExisting[Return Existing Page]
-    CheckPage -->|No| ExtractData[intent-calculator.ts<br/>Extract Data by Path]
-    ExtractData --> GeneratePage[page-generator.ts<br/>Prepare AI Prompt]
-    GeneratePage --> ExtractImages[Extract All Images<br/>with Context]
-    ExtractImages --> CallClaude[Call Claude AI<br/>Generate HTML]
-    CallClaude --> ClaudePage[Claude AI<br/>Returns HTML]
-    ClaudePage --> PostProcess[Post-process HTML<br/>Remove Placeholders]
-    PostProcess --> StorePage[page-storage.ts<br/>Store in Memory]
-    StorePage --> ReturnSuccess[Return Success]
-    ReturnSuccess --> UpdateCard[Update Intent Card<br/>Show View Page Button]
-    ReturnExisting --> UpdateCard
-    
-    UpdateCard --> UserViews[User Clicks<br/>View Page Button]
-    UserViews --> HashChange[Hash Changes<br/>#intentId]
-    HashChange --> GETPage[GET /api/page/:intentId]
-    GETPage --> RetrievePage[page-storage.ts<br/>Retrieve HTML]
-    RetrievePage --> InjectHTML[Inject HTML into<br/>main element]
-    InjectHTML --> DisplayPage[Display Generated Page]
-    
-    DisplayPage --> UserClicksDetail[User Clicks<br/>View Full Details]
-    UserClicksDetail --> HashDetail[Hash Changes<br/>#intentId-detail-itemId]
-    HashDetail --> CheckDetail{Detail Page<br/>Exists?}
-    CheckDetail -->|No| POSTDetail[POST /api/generate-detail-page]
-    CheckDetail -->|Yes| GETDetail[GET /api/page/:detailPageId]
-    POSTDetail --> FindItem[Search for Item<br/>in Site Data]
-    FindItem --> GenerateDetail[detail-page-generator.ts<br/>Generate Detail Page]
-    GenerateDetail --> CallClaudeDetail[Call Claude AI<br/>Generate Detail HTML]
-    CallClaudeDetail --> StoreDetail[Store Detail Page]
-    StoreDetail --> GETDetail
-    GETDetail --> DisplayDetail[Display Detail Page]
-    
-    DisplayDetail --> BackButton[User Clicks Back]
-    DisplayPage --> BackButtonHome[User Clicks Back to Home]
-    BackButton --> DisplayPage
-    BackButtonHome --> Homepage
-    
-    style Start fill:#e1f5ff,stroke:#01579b,stroke-width:3px,color:#000
-    style ConnectScreen fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
-    style Homepage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
-    style POSTConnect fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
-    style POSTGenerate fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
-    style POSTDetail fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
-    style GETPage fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
-    style GETDetail fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
-    style SleekCMSAPI fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
-    style ClaudeIntent fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
-    style ClaudePage fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
-    style CallClaudeDetail fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
-    style StorePage fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
-    style StoreDetail fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
-    style DisplayPage fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
-    style DisplayDetail fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
-    style CheckSession fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
-    style CheckColors fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
-    style CheckPage fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
-    style CheckDetail fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                        flowchart TD
+                                        Start([User Opens Application]) --> CheckSession{Session Exists?}
+                                        CheckSession -->|No| ConnectScreen[Connect Screen<br />Enter Pub Token]
+                                        CheckSession -->|Yes| ValidateSession[Validate Session]
+                                        ValidateSession -->|Valid| Homepage
+                                        ValidateSession -->|Invalid| ConnectScreen
+
+                                        ConnectScreen --> SubmitToken[User Submits Pub Token]
+                                        SubmitToken --> POSTConnect[POST /api/connect]
+
+                                        POSTConnect --> FetchData[pub-token-fetcher.ts<br />Fetch Site Data from
+                                        SleekCMS]
+                                        FetchData --> SleekCMSAPI[SleekCMS API<br />Returns JSON Data]
+                                        SleekCMSAPI --> ExtractHero[hero-extractor.ts<br />Extract Title, Subtitle,
+                                        Image]
+                                        ExtractHero --> ExtractTheme[theme-extractor.ts<br />Try Manual Color
+                                        Extraction]
+                                        ExtractTheme --> CheckColors{Colors Found?}
+                                        CheckColors -->|No| AIDetectTheme[ai-theme-detector.ts<br />AI Detects Colors]
+                                        CheckColors -->|Yes| CalculateIntents
+                                        AIDetectTheme --> CalculateIntents[ai-intent-calculator.ts<br />AI Calculates
+                                        Intent Cards]
+                                        CalculateIntents --> ClaudeIntent[Claude AI<br />Analyzes Data & Returns
+                                        Intents]
+                                        ClaudeIntent --> CreateSession[Create Session<br />Store in Memory]
+                                        CreateSession --> ReturnResponse[Return: sessionId, siteName,<br />heroData,
+                                        intents, themeColors]
+                                        ReturnResponse --> Homepage[Homepage Display<br />Hero Section + Intent Cards
+                                        Grid]
+
+                                        Homepage --> UserClicks[User Clicks<br />Generate Page Button]
+                                        UserClicks --> POSTGenerate[POST /api/generate-page]
+                                        POSTGenerate --> CheckPage{Page Exists?}
+                                        CheckPage -->|Yes| ReturnExisting[Return Existing Page]
+                                        CheckPage -->|No| ExtractData[intent-calculator.ts<br />Extract Data by Path]
+                                        ExtractData --> GeneratePage[page-generator.ts<br />Prepare AI Prompt]
+                                        GeneratePage --> ExtractImages[Extract All Images<br />with Context]
+                                        ExtractImages --> CallClaude[Call Claude AI<br />Generate HTML]
+                                        CallClaude --> ClaudePage[Claude AI<br />Returns HTML]
+                                        ClaudePage --> PostProcess[Post-process HTML<br />Remove Placeholders]
+                                        PostProcess --> StorePage[page-storage.ts<br />Store in Memory]
+                                        StorePage --> ReturnSuccess[Return Success]
+                                        ReturnSuccess --> UpdateCard[Update Intent Card<br />Show View Page Button]
+                                        ReturnExisting --> UpdateCard
+
+                                        UpdateCard --> UserViews[User Clicks<br />View Page Button]
+                                        UserViews --> HashChange[Hash Changes<br />#intentId]
+                                        HashChange --> GETPage[GET /api/page/:intentId]
+                                        GETPage --> RetrievePage[page-storage.ts<br />Retrieve HTML]
+                                        RetrievePage --> InjectHTML[Inject HTML into<br />main element]
+                                        InjectHTML --> DisplayPage[Display Generated Page]
+
+                                        DisplayPage --> UserClicksDetail[User Clicks<br />View Full Details]
+                                        UserClicksDetail --> HashDetail[Hash Changes<br />#intentId-detail-itemId]
+                                        HashDetail --> CheckDetail{Detail Page<br />Exists?}
+                                        CheckDetail -->|No| POSTDetail[POST /api/generate-detail-page]
+                                        CheckDetail -->|Yes| GETDetail[GET /api/page/:detailPageId]
+                                        POSTDetail --> FindItem[Search for Item<br />in Site Data]
+                                        FindItem --> GenerateDetail[detail-page-generator.ts<br />Generate Detail Page]
+                                        GenerateDetail --> CallClaudeDetail[Call Claude AI<br />Generate Detail HTML]
+                                        CallClaudeDetail --> StoreDetail[Store Detail Page]
+                                        StoreDetail --> GETDetail
+                                        GETDetail --> DisplayDetail[Display Detail Page]
+
+                                        DisplayDetail --> BackButton[User Clicks Back]
+                                        DisplayPage --> BackButtonHome[User Clicks Back to Home]
+                                        BackButton --> DisplayPage
+                                        BackButtonHome --> Homepage
+
+                                        style Start fill:#e1f5ff,stroke:#01579b,stroke-width:3px,color:#000
+                                        style ConnectScreen fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+                                        style Homepage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+                                        style POSTConnect fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+                                        style POSTGenerate fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+                                        style POSTDetail fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000
+                                        style GETPage fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+                                        style GETDetail fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px,color:#000
+                                        style SleekCMSAPI fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                        style ClaudeIntent fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+                                        style ClaudePage fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+                                        style CallClaudeDetail fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+                                        style StorePage fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
+                                        style StoreDetail fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
+                                        style DisplayPage fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
+                                        style DisplayDetail fill:#e8eaf6,stroke:#311b92,stroke-width:2px,color:#000
+                                        style CheckSession fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                        style CheckColors fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                        style CheckPage fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+                                        style CheckDetail fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-8">
                                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Technical Stack</h2>
                                 <div class="flex flex-wrap gap-2">
-                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Express.js</span>
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">TypeScript</span>
-                                    <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">Tailwind CSS</span>
-                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Claude AI</span>
-                                    <span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium">SleekCMS</span>
+                                    <span
+                                        class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Express.js</span>
+                                    <span
+                                        class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">TypeScript</span>
+                                    <span
+                                        class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">Tailwind
+                                        CSS</span>
+                                    <span
+                                        class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Claude
+                                        AI</span>
+                                    <span
+                                        class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-medium">SleekCMS</span>
                                 </div>
                             </div>
-                            
+
                             <div class="border-t border-gray-200 pt-6">
                                 <p class="text-sm text-gray-500">
-                                    This is a dynamic content system that generates pages on-demand. Pages are stored in server memory and persist for the session duration.
+                                    This is a dynamic content system that generates pages on-demand. Pages are stored in
+                                    server memory and persist for the session duration.
                                 </p>
                             </div>
                         </div>
@@ -353,19 +415,13 @@ flowchart TD
                         <p id="site-subtitle" class="text-sm text-gray-500 mt-1">What would you like to explore?</p>
                     </div>
                     <div class="flex gap-2">
-                        <button
-                            id="back-to-home"
-                            onclick="window.location.hash = ''"
-                            class="hidden md:block px-4 py-2 rounded-lg transition"
-                        >
+                        <button id="back-to-home" onclick="window.location.hash = ''"
+                            class="hidden md:block px-4 py-2 rounded-lg transition">
                             ← Back to Home
                         </button>
-                        <button
-                            id="disconnect-button"
-                            onclick="window.disconnectSession()"
+                        <button id="disconnect-button" onclick="window.disconnectSession()"
                             class="px-4 py-2 rounded-lg transition border text-sm font-semibold"
-                            style="color: var(--theme-primary, #3b82f6); border-color: var(--theme-primary, #3b82f6)30;"
-                        >
+                            style="color: var(--theme-primary, #3b82f6); border-color: var(--theme-primary, #3b82f6)30;">
                             Disconnect
                         </button>
                     </div>
@@ -382,35 +438,42 @@ flowchart TD
         </main>
     </div>
 
-    <!-- Notification Container (Top Right) -->
     <div id="notification-container" class="fixed top-4 right-4 z-50 max-w-sm flex flex-col"></div>
 
-    <!-- JSON Viewer Button (Bottom Right) -->
-    <button id="json-viewer-btn" class="fixed bottom-6 right-6 z-50 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-full p-4 shadow-lg transition-all duration-200 hover:shadow-xl hidden" onclick="showJsonViewer()">
+    <button id="json-viewer-btn"
+        class="fixed bottom-6 right-6 z-50 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-full p-4 shadow-lg transition-all duration-200 hover:shadow-xl hidden"
+        onclick="showJsonViewer()">
         <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
         </svg>
     </button>
 
-    <!-- JSON Viewer Modal -->
-    <div id="json-viewer-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4" onclick="if(event.target === this) hideJsonViewer()">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+    <div id="json-viewer-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+        onclick="if(event.target === this) hideJsonViewer()">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col"
+            onclick="event.stopPropagation()">
             <div class="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 class="text-2xl font-bold text-gray-900">Site Data JSON</h2>
                 <button onclick="hideJsonViewer()" class="text-gray-400 hover:text-gray-600 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
             <div class="flex-1 overflow-auto p-6">
-                <pre id="json-content" class="text-sm text-gray-800 bg-gray-50 p-4 rounded-lg overflow-x-auto font-mono whitespace-pre-wrap break-words"></pre>
+                <pre id="json-content"
+                    class="text-sm text-gray-800 bg-gray-50 p-4 rounded-lg overflow-x-auto font-mono whitespace-pre-wrap break-words"></pre>
             </div>
             <div class="p-6 border-t border-gray-200 flex justify-end gap-3">
-                <button onclick="hideJsonViewer()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
+                <button onclick="hideJsonViewer()"
+                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
                     Close
                 </button>
-                <button onclick="copyJsonToClipboard()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                <button onclick="copyJsonToClipboard()"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                     Copy to Clipboard
                 </button>
             </div>
@@ -418,12 +481,10 @@ flowchart TD
     </div>
 
     <script>
-        // Backend API Configuration - Auto-detects production vs development
         const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3000'
-            : ''; // Empty string means relative URLs (same domain)
-        
-        // Global state
+            : '';
+
         let sessionId = localStorage.getItem('sessionId') || null;
         let fetchedSiteData = null;
         let siteName = '';
@@ -431,7 +492,7 @@ flowchart TD
         let themeColors = {};
         let heroData = {};
         let isGenerating = false;
-        
+
         function useToken(token) {
             const tokenInput = document.getElementById('pub-token');
             if (tokenInput) {
@@ -447,18 +508,18 @@ flowchart TD
         function showNotification(message, type = 'info', duration = NOTIFICATION_DURATION) {
             const container = document.getElementById('notification-container');
             if (!container) return;
-            
+
             console.log(`[${type.toUpperCase()}] ${message}`);
-            
+
             if (activeNotifications.length >= MAX_NOTIFICATIONS) {
                 const oldestNotification = activeNotifications[0];
                 if (oldestNotification) {
                     removeNotification(oldestNotification.id);
                 }
             }
-            
+
             const notificationId = 'notif-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-            
+
             const icons = {
                 success: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>',
                 error: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>',
@@ -492,10 +553,9 @@ flowchart TD
             `;
 
             container.appendChild(notification);
-            
+
             activeNotifications.push({ id: notificationId, element: notification, timestamp: Date.now() });
-            
-            // Add event listener to close button as backup (in case onclick doesn't work)
+
             setTimeout(() => {
                 const closeButton = notification.querySelector('button[onclick*="removeNotification"]');
                 if (closeButton) {
@@ -506,7 +566,7 @@ flowchart TD
                     });
                 }
             }, 50);
-            
+
             setTimeout(() => {
                 notification.style.opacity = '1';
                 notification.style.transform = 'translateX(0)';
@@ -515,14 +575,13 @@ flowchart TD
             const timeoutId = setTimeout(() => {
                 removeNotification(notificationId);
             }, duration);
-            
+
             notification.dataset.timeoutId = timeoutId;
         }
 
         function removeNotification(id) {
             const notification = document.getElementById(id);
             if (!notification) {
-                // If notification not found, remove from array anyway
                 const index = activeNotifications.findIndex(n => n.id === id);
                 if (index !== -1) {
                     activeNotifications.splice(index, 1);
@@ -532,25 +591,20 @@ flowchart TD
             
             const index = activeNotifications.findIndex(n => n.id === id);
             if (index === -1) {
-                // Not in array but exists in DOM, remove it anyway
                 notification.remove();
                 return;
             }
             
-            // Clear timeout if exists
             if (notification.dataset.timeoutId) {
                 clearTimeout(parseInt(notification.dataset.timeoutId));
                 delete notification.dataset.timeoutId;
             }
             
-            // Remove from array first to prevent double removal
             activeNotifications.splice(index, 1);
             
-            // Animate out
             notification.style.opacity = '0';
             notification.style.transform = 'translateX(100%)';
             
-            // Remove from DOM after animation
             setTimeout(() => {
                 if (notification && notification.parentNode) {
                     notification.remove();
@@ -561,7 +615,7 @@ flowchart TD
         function showJsonViewer() {
             const modal = document.getElementById('json-viewer-modal');
             const content = document.getElementById('json-content');
-            
+
             if (fetchedSiteData) {
                 content.textContent = JSON.stringify(fetchedSiteData, null, 2);
                 modal.classList.remove('hidden');
@@ -583,7 +637,7 @@ flowchart TD
                 showNotification('Failed to copy JSON', 'error');
             });
         }
-        
+
         async function checkExistingSession() {
             const storedSessionId = localStorage.getItem('sessionId');
             if (!storedSessionId) {
@@ -591,38 +645,36 @@ flowchart TD
                 document.getElementById('app-screen').classList.add('hidden');
                 return;
             }
-            
+
             try {
-                // Check if session is still valid
                 const response = await fetch(`${API_BASE_URL}/api/session/${storedSessionId}`);
                 
                 if (!response.ok) {
-                    // Session not found or invalid, clear and show connect screen
                     localStorage.removeItem('sessionId');
                     sessionId = null;
                     document.getElementById('connect-screen').classList.remove('hidden');
                     document.getElementById('app-screen').classList.add('hidden');
                     return;
                 }
-                
+
                 const data = await response.json();
-                
+
                 sessionId = data.sessionId;
                 siteName = data.siteName;
                 intents = data.intents;
                 themeColors = data.themeColors || {};
                 heroData = data.heroData || {};
-                
+
                 fetchedSiteData = data.siteData || data;
                 if (fetchedSiteData) {
                     document.getElementById('json-viewer-btn').classList.remove('hidden');
                 }
-                
+
                 applyThemeColors(themeColors);
-                
+
                 document.getElementById('connect-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
-                
+
                 const hash = window.location.hash.replace('#', '');
                 if (hash) {
                 } else {
@@ -630,28 +682,26 @@ flowchart TD
                 }
             } catch (error) {
                 console.error('Session check error:', error);
-                // On error, clear session and show connect screen
                 localStorage.removeItem('sessionId');
                 sessionId = null;
                 document.getElementById('connect-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('hidden');
             }
         }
-        
+
         function applyThemeColors(colors) {
             if (!colors || Object.keys(colors).length === 0) return;
-            
+
             const primary = colors.primary || '#3b82f6';
             const secondary = colors.secondary || '#8b5cf6';
             const accent = colors.accent || '#f59e0b';
             const background = colors.background || '#ffffff';
             const text = colors.text || '#1f2937';
             
-            // Apply to header
             const header = document.getElementById('main-header');
             const siteTitle = document.getElementById('site-title');
             const backButton = document.getElementById('back-to-home');
-            
+
             if (header) {
                 header.style.backgroundColor = background;
                 header.style.borderColor = primary + '20';
@@ -669,13 +719,13 @@ flowchart TD
                     backButton.style.backgroundColor = 'transparent';
                 };
             }
-            
+
             document.documentElement.style.setProperty('--theme-primary', primary);
             document.documentElement.style.setProperty('--theme-secondary', secondary);
             document.documentElement.style.setProperty('--theme-accent', accent);
             document.documentElement.style.setProperty('--theme-background', background);
             document.documentElement.style.setProperty('--theme-text', text);
-            
+
             const style = document.createElement('style');
             style.textContent = `
                 ::-webkit-scrollbar-thumb {
@@ -687,8 +737,7 @@ flowchart TD
             `;
             document.head.appendChild(style);
         }
-
-        // Connect form handler
+        
         document.getElementById('connect-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const pubToken = document.getElementById('pub-token').value.trim();
@@ -697,28 +746,28 @@ flowchart TD
             const connectButton = document.getElementById('connect-button');
             const connectButtonText = document.getElementById('connect-button-text');
             const connectButtonLoader = document.getElementById('connect-button-loader');
-            
+
             errorDiv.classList.add('hidden');
-            
+
             showNotification('Sending connection request...', 'info');
             console.log('[REQUEST] POST /api/connect - Connecting with pub token');
-            
+
             connectButton.disabled = true;
             connectButtonText.classList.add('hidden');
             connectButtonLoader.classList.remove('hidden');
-            
+
             try {
                 showNotification('Fetching site data from SleekCMS...', 'info');
                 console.log('[FETCH] Requesting data from SleekCMS API');
-                
+
                 const response = await fetch(`${API_BASE_URL}/api/connect`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pubToken })
                 });
-                
+
                 console.log('[RESPONSE] Received response:', response.status, response.statusText);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -729,50 +778,50 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Connection failed');
                 }
-                
+
                 const data = await response.json();
-                
+
                 console.log('[DATA] Site data received successfully');
                 console.log('[DATA] Site name:', data.siteName);
                 console.log('[DATA] Intents found:', data.intents?.length || 0);
                 console.log('[DATA] Full response:', data);
-                
+
                 showNotification('Site data received successfully', 'success');
-                
+
                 sessionId = data.sessionId;
                 siteName = data.siteName;
                 intents = data.intents;
                 themeColors = data.themeColors || {};
                 heroData = data.heroData || {};
-                
+
                 showNotification('Extracting site information...', 'info');
                 console.log('[PROCESS] Extracting hero data and theme colors');
-                
+
                 showNotification('Calculating intent cards with AI...', 'info');
                 console.log('[AI] Analyzing site data structure');
-                
+
                 localStorage.setItem('sessionId', sessionId);
-                
+
                 applyThemeColors(themeColors);
-                
+
                 showNotification('Session created successfully', 'success');
                 console.log('[SESSION] Session ID:', sessionId);
-                
+
                 fetchedSiteData = data.siteData || data;
                 document.getElementById('json-viewer-btn').classList.remove('hidden');
                 console.log('[STORAGE] Site data stored for JSON viewer');
                 console.log('[STORAGE] Data keys:', fetchedSiteData ? Object.keys(fetchedSiteData).slice(0, 10) : 'No data');
-                
+
                 document.getElementById('connect-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
-                
+
                 if (fetchedSiteData) {
                     document.getElementById('json-viewer-btn').classList.remove('hidden');
                 }
-                
+
                 showNotification(`Connected to "${siteName}"`, 'success');
                 showNotification(`Found ${intents.length} intent cards`, 'info');
-                
+
                 renderHomepage();
             } catch (error) {
                 console.error('[ERROR] Connection failed:', error.message);
@@ -789,7 +838,7 @@ flowchart TD
         async function renderHomepage() {
             const backButton = document.getElementById('back-to-home');
             if (backButton) backButton.classList.add('hidden');
-            
+
             if (!sessionId || !intents || intents.length === 0) {
                 document.getElementById('main-content').innerHTML = `
                     <div class="text-center py-12">
@@ -798,12 +847,12 @@ flowchart TD
                 `;
                 return;
             }
-            
+
             document.getElementById('site-title').textContent = siteName;
-            
+
             const primaryColor = themeColors.primary || '#3b82f6';
             const primaryLight = hexToRgba(primaryColor, 0.05);
-            
+
             let heroHTML = '';
             if (heroData.title || heroData.subtitle || heroData.image) {
                 heroHTML = `
@@ -826,7 +875,7 @@ flowchart TD
                     </section>
                 `;
             }
-            
+
             document.getElementById('main-content').innerHTML = `
                 <div id="homepage-content">
                     ${heroHTML}
@@ -837,11 +886,10 @@ flowchart TD
                     <div id="intent-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
             `;
-            
+
             const cardsContainer = document.getElementById('intent-cards');
             cardsContainer.innerHTML = '<div class="col-span-full text-center py-8"><div class="inline-flex items-center text-gray-600"><svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Checking page status...</div></div>';
             
-            // Check status for all intents - wait for all to complete
             const statusChecks = await Promise.all(
                 intents.map(async (intent) => {
                     try {
@@ -858,21 +906,19 @@ flowchart TD
                 })
             );
             
-            // Clear loading message
             cardsContainer.innerHTML = '';
-            
+
             const primaryLighter = hexToRgba(primaryColor, 0.2);
             const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
-            
+
             statusChecks.forEach(({ intent, generated }) => {
                 const card = document.createElement('div');
                 card.id = `intent-card-${intent.id}`;
                 card.className = 'bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 flex flex-col';
                 card.style.borderColor = `rgba(${hexToRgb(primaryColor)}, 0.2)`;
                 
-                // Professional icon display
                 const iconDisplay = getProfessionalIcon(intent.icon, intent.title);
-                
+
                 let actionHTML = '';
                 if (generated) {
                     actionHTML = `
@@ -894,7 +940,7 @@ flowchart TD
                         </button>
                     `;
                 }
-                
+
                 card.innerHTML = `
                     <div class="flex flex-col h-full">
                         <div class="flex items-start justify-between mb-4">
@@ -910,61 +956,53 @@ flowchart TD
                         </div>
                     </div>
                 `;
-                
+
                 cardsContainer.appendChild(card);
             });
         }
         
-        // Get professional icon display
         function getProfessionalIcon(icon, title) {
-            // If it's already an emoji, wrap it nicely
             if (icon.match(/[\u{1F300}-\u{1F9FF}]/u)) {
                 return `<span class="text-3xl">${icon}</span>`;
             }
-            // Otherwise return as-is
             return icon;
         }
         
-        // Helper to convert hex to rgba
         function hexToRgba(hex, alpha) {
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
-        
+
         function hexToRgb(hex) {
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
             return `${r}, ${g}, ${b}`;
         }
-        
+
         async function generatePageFromHome(intentId, dataPath) {
             if (isGenerating) {
                 return;
             }
             
-            // FIRST: Check if page already exists before generating
             try {
                 const statusResponse = await fetch(`${API_BASE_URL}/api/page-status/${intentId}`);
                 const statusData = await statusResponse.json();
                 if (statusData.generated) {
-                    // Page already exists, just update the UI and show view button
                     updateIntentCardToGenerated(intentId, dataPath);
                     showNotification('Page already exists', 'info', 1500);
                     return;
                 }
             } catch (err) {
-                // If status check fails, continue with generation
                 console.log('[Generate] Status check failed, proceeding with generation');
             }
             
             isGenerating = true;
             
-            // Disable all intent cards
             disableAllIntentCards();
-            
+
             const actionDiv = document.getElementById(`action-${intentId}`);
             const statusDiv = document.getElementById(`status-${intentId}`);
             if (!actionDiv) {
@@ -972,17 +1010,17 @@ flowchart TD
                 enableAllIntentCards();
                 return;
             }
-            
+
             const intent = intents.find(i => i.id === intentId);
             if (!intent) {
                 isGenerating = false;
                 enableAllIntentCards();
                 return;
             }
-            
+
             const primaryColor = themeColors.primary || '#3b82f6';
             const primaryLight = hexToRgba(primaryColor, 0.1);
-            
+
             if (statusDiv) {
                 statusDiv.innerHTML = `
                     <div class="flex items-center space-x-2" style="color: ${primaryColor};">
@@ -993,7 +1031,7 @@ flowchart TD
                     </div>
                 `;
             }
-            
+
             actionDiv.innerHTML = `
                 <div class="flex items-center justify-center px-4 py-2 rounded-lg" style="background-color: ${primaryLight}; color: ${primaryColor};">
                     <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1003,7 +1041,7 @@ flowchart TD
                     Generating...
                 </div>
             `;
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/generate-page`, {
                     method: 'POST',
@@ -1014,7 +1052,7 @@ flowchart TD
                         dataPath
                     })
                 });
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1025,12 +1063,11 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Generation failed');
                 }
-                
+
                 const data = await response.json();
                 
-                // Update button to show view + regenerate
                 updateIntentCardToGenerated(intentId, dataPath);
-                
+
                 showNotification('Page generated successfully', 'success');
             } catch (error) {
                 actionDiv.innerHTML = `
@@ -1043,12 +1080,12 @@ flowchart TD
                 enableAllIntentCards();
             }
         }
-        
+
         function disableAllIntentCards() {
             intents.forEach(intent => {
                 const card = document.getElementById(`intent-card-${intent.id}`);
                 const pageCard = document.getElementById(`page-intent-card-${intent.id}`);
-                
+
                 if (card) {
                     card.style.opacity = '0.5';
                     card.style.pointerEvents = 'none';
@@ -1061,12 +1098,12 @@ flowchart TD
                 }
             });
         }
-        
+
         function enableAllIntentCards() {
             intents.forEach(intent => {
                 const card = document.getElementById(`intent-card-${intent.id}`);
                 const pageCard = document.getElementById(`page-intent-card-${intent.id}`);
-                
+
                 if (card) {
                     card.style.opacity = '1';
                     card.style.pointerEvents = '';
@@ -1080,18 +1117,16 @@ flowchart TD
             });
         }
         
-        // Helper function to update intent card to show "View Page" button
         function updateIntentCardToGenerated(intentId, dataPath) {
             const actionDiv = document.getElementById(`action-${intentId}`);
             const statusDiv = document.getElementById(`status-${intentId}`);
             const card = document.getElementById(`intent-card-${intentId}`);
-            
+
             if (!actionDiv) return;
-            
+
             const primaryColor = themeColors.primary || '#3b82f6';
             const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
             
-            // Update status icon
             if (statusDiv) {
                 statusDiv.innerHTML = `
                     <div class="text-green-600">
@@ -1102,7 +1137,6 @@ flowchart TD
                 `;
             }
             
-            // Update action buttons
             actionDiv.innerHTML = `
                 <div class="flex gap-2">
                     <a href="#${intentId}" class="flex-1 inline-flex items-center justify-center px-4 py-2 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105" style="background-color: ${primaryColor};" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
@@ -1115,15 +1149,12 @@ flowchart TD
                     </button>
                 </div>
             `;
-            
-            // Update card checkmark if it exists
+
             if (card) {
                 const iconContainer = card.querySelector('.flex.items-start.justify-between');
                 if (iconContainer) {
-                    // Remove existing checkmark if any
                     const existingCheckmark = iconContainer.querySelector('.text-green-600:last-child');
                     if (!existingCheckmark || !existingCheckmark.querySelector('svg')) {
-                        // Add checkmark if it doesn't exist
                         const checkmark = document.createElement('div');
                         checkmark.className = 'text-green-600';
                         checkmark.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
@@ -1132,11 +1163,11 @@ flowchart TD
                 }
             }
         }
-        
+
         async function regeneratePageFromHome(intentId, dataPath) {
             const actionDiv = document.getElementById(`action-${intentId}`);
             if (!actionDiv) return;
-            
+
             const originalHTML = actionDiv.innerHTML;
             actionDiv.innerHTML = `
                 <div class="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">
@@ -1147,7 +1178,7 @@ flowchart TD
                     Regenerating...
                 </div>
             `;
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/regenerate-page`, {
                     method: 'POST',
@@ -1158,7 +1189,7 @@ flowchart TD
                         dataPath
                     })
                 });
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1169,10 +1200,9 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Regeneration failed');
                 }
-                
+
                 const data = await response.json();
                 
-                // Reload the current page if we're viewing it
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash === intentId) {
                     window.location.hash = '';
@@ -1181,7 +1211,6 @@ flowchart TD
                     }, 100);
                 }
                 
-                // Restore button
                 actionDiv.innerHTML = originalHTML;
             } catch (error) {
                 actionDiv.innerHTML = `
@@ -1194,24 +1223,23 @@ flowchart TD
 
         function createIntentCardsSection() {
             if (!intents || intents.length === 0) return '';
-            
+
             let cardsHTML = `
                 <div class="mt-16 pt-8 border-t border-gray-200">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Explore More</h2>
                     <div id="page-intent-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
             `;
-            
+
             return cardsHTML;
         }
-        
+
         async function attachIntentCardListeners() {
             const cardsContainer = document.getElementById('page-intent-cards');
             if (!cardsContainer) return;
-            
+
             cardsContainer.innerHTML = '';
             
-            // Check status for all intents
             const statusChecks = await Promise.all(
                 intents.map(async (intent) => {
                     try {
@@ -1223,20 +1251,19 @@ flowchart TD
                     }
                 })
             );
-            
+
             const primaryColor = themeColors.primary || '#3b82f6';
             const primaryLight = hexToRgba(primaryColor, 0.1);
             const primaryLighter = hexToRgba(primaryColor, 0.2);
-            
+
             statusChecks.forEach(({ intent, generated }) => {
                 const card = document.createElement('div');
                 card.id = `page-intent-card-${intent.id}`;
                 card.className = 'bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 flex flex-col';
                 card.style.borderColor = `rgba(${hexToRgb(primaryColor)}, 0.2)`;
                 
-                // Professional icon display
                 const iconDisplay = getProfessionalIcon(intent.icon, intent.title);
-                
+
                 let actionHTML = '';
                 if (generated) {
                     actionHTML = `
@@ -1258,7 +1285,7 @@ flowchart TD
                         </button>
                     `;
                 }
-                
+
                 card.innerHTML = `
                     <div class="flex flex-col h-full">
                         <div class="flex items-start justify-between mb-4">
@@ -1274,38 +1301,38 @@ flowchart TD
                         </div>
                     </div>
                 `;
-                
+
                 cardsContainer.appendChild(card);
             });
         }
-        
+
         async function generatePageFromExplore(intentId, dataPath) {
             if (isGenerating) {
                 return;
             }
-            
+
             isGenerating = true;
-            
+
             const intent = intents.find(i => i.id === intentId);
             const intentTitle = intent?.title || intentId;
-            
+
             showNotification(`Starting page generation for "${intentTitle}"...`, 'info');
             console.log('[GENERATE] Starting page generation from explore section');
             console.log('[GENERATE] Intent ID:', intentId);
             console.log('[GENERATE] Data Path:', dataPath);
-            
+
             disableAllIntentCards();
-            
+
             const actionDiv = document.getElementById(`page-action-${intentId}`);
             if (!actionDiv) {
                 isGenerating = false;
                 enableAllIntentCards();
                 return;
             }
-            
+
             const primaryColor = themeColors.primary || '#3b82f6';
             const primaryLight = hexToRgba(primaryColor, 0.1);
-            
+
             actionDiv.innerHTML = `
                 <div class="flex items-center justify-center px-4 py-2 rounded-lg" style="background-color: ${primaryLight}; color: ${primaryColor};">
                     <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1315,14 +1342,14 @@ flowchart TD
                     Generating...
                 </div>
             `;
-            
+
             try {
                 showNotification('Sending generation request to server...', 'info');
                 console.log('[REQUEST] POST /api/generate-page');
-                
+
                 showNotification('Extracting relevant data from site structure...', 'info');
                 console.log('[PROCESS] Extracting data from path:', dataPath);
-                
+
                 const response = await fetch(`${API_BASE_URL}/api/generate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1332,9 +1359,9 @@ flowchart TD
                         dataPath
                     })
                 });
-                
+
                 console.log('[RESPONSE] Received response:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1345,19 +1372,19 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Generation failed');
                 }
-                
+
                 const data = await response.json();
-                
+
                 showNotification('Preparing AI prompt with data and images...', 'info');
                 console.log('[AI] Preparing prompt for Claude AI');
-                
+
                 showNotification('Calling Claude AI to generate page...', 'info');
                 console.log('[AI] Requesting HTML generation from Claude');
-                
+
                 showNotification('Page generated successfully!', 'success');
                 console.log('[SUCCESS] Page generated and stored');
                 console.log('[STORAGE] Page stored with ID:', intentId);
-                
+
                 const primaryColor = themeColors.primary || '#3b82f6';
                 const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
                 actionDiv.innerHTML = `
@@ -1385,18 +1412,18 @@ flowchart TD
                 enableAllIntentCards();
             }
         }
-        
+
         async function regeneratePage(intentId, dataPath) {
             const actionDiv = document.getElementById(`page-action-${intentId}`);
             if (!actionDiv) return;
-            
+
             const intent = intents.find(i => i.id === intentId);
             const intentTitle = intent?.title || intentId;
-            
+
             showNotification(`Regenerating page for "${intentTitle}"...`, 'info');
             console.log('[REGENERATE] Starting page regeneration from explore section');
             console.log('[REGENERATE] Intent ID:', intentId);
-            
+
             const originalHTML = actionDiv.innerHTML;
             actionDiv.innerHTML = `
                 <div class="flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg">
@@ -1407,11 +1434,11 @@ flowchart TD
                     Regenerating...
                 </div>
             `;
-            
+
             try {
                 showNotification('Sending regeneration request...', 'info');
                 console.log('[REQUEST] POST /api/regenerate-page');
-                
+
                 const response = await fetch(`${API_BASE_URL}/api/regenerate-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1421,9 +1448,9 @@ flowchart TD
                         dataPath
                     })
                 });
-                
+
                 console.log('[RESPONSE] Received response:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1434,15 +1461,15 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Regeneration failed');
                 }
-                
+
                 const data = await response.json();
-                
+
                 showNotification('Regenerating page with AI...', 'info');
                 console.log('[AI] Regenerating HTML with Claude AI');
-                
+
                 showNotification('Page regenerated successfully!', 'success');
                 console.log('[SUCCESS] Page regenerated and stored');
-                
+
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash === intentId) {
                     window.location.hash = '';
@@ -1450,7 +1477,7 @@ flowchart TD
                         window.location.hash = `#${intentId}`;
                     }, 100);
                 }
-                
+
                 actionDiv.innerHTML = originalHTML;
             } catch (error) {
                 console.error('[ERROR] Page regeneration failed:', error.message);
@@ -1462,11 +1489,11 @@ flowchart TD
                 `;
             }
         }
-        
+
         function removeExternalNavigation() {
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
-            
+
             const allLinks = mainContent.querySelectorAll('a[href]');
             allLinks.forEach(link => {
                 const href = link.getAttribute('href');
@@ -1478,7 +1505,7 @@ flowchart TD
                     link.parentNode?.replaceChild(span, link);
                 }
             });
-            
+
             const buttons = mainContent.querySelectorAll('button[onclick]');
             buttons.forEach(button => {
                 const onclick = button.getAttribute('onclick');
@@ -1487,7 +1514,6 @@ flowchart TD
                 }
             });
             
-            // Remove any form submissions
             const forms = mainContent.querySelectorAll('form');
             forms.forEach(form => {
                 form.addEventListener('submit', (e) => {
@@ -1498,23 +1524,22 @@ flowchart TD
 
         window.disconnectSession = async function disconnectSession() {
             if (!sessionId) {
-                // Already disconnected, just show connect screen
                 document.getElementById('connect-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('hidden');
                 return;
             }
-            
+
             if (!confirm('Are you sure you want to disconnect? This will clear all generated pages and return to the connect screen.')) {
                 return;
             }
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/disconnect`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ sessionId })
                 });
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1529,7 +1554,7 @@ flowchart TD
                 console.error('Disconnect error:', error);
                 alert('Error disconnecting: ' + (error.message || 'Unknown error'));
             }
-            
+
             sessionId = null;
             siteName = '';
             intents = [];
@@ -1537,28 +1562,28 @@ flowchart TD
             heroData = {};
             isGenerating = false;
             fetchedSiteData = null;
-            
+
             localStorage.removeItem('sessionId');
-            
+
             document.getElementById('json-viewer-btn').classList.add('hidden');
             fetchedSiteData = null;
-            
+
             window.location.hash = '';
             document.getElementById('connect-screen').classList.remove('hidden');
             document.getElementById('app-screen').classList.add('hidden');
-            
+
             document.getElementById('pub-token').value = '';
-            
+
             showNotification('Disconnected successfully', 'info');
             console.log('[DISCONNECT] Session cleared');
         };
-        
+
         async function handleHashChange() {
             const hash = window.location.hash.replace('#', '');
             const mainContent = document.getElementById('main-content');
             const backButton = document.getElementById('back-to-home');
             const disconnectButton = document.getElementById('disconnect-button');
-            
+
             if (!hash) {
                 if (sessionId && intents && intents.length > 0) {
                     renderHomepage();
@@ -1571,33 +1596,30 @@ flowchart TD
                 return;
             }
             
-            // Show back button and disconnect button when viewing a page
             backButton.classList.remove('hidden');
             if (disconnectButton) disconnectButton.classList.remove('hidden');
             
-            // Check if this is a detail page FIRST
             const isDetailPage = hash.includes('-detail-');
             let parentIntentId = null;
-            
+
             if (isDetailPage) {
                 const parts = hash.split('-detail-');
                 if (parts.length === 2) {
                     parentIntentId = parts[0];
                 }
             }
-            
+
             if (isDetailPage && parentIntentId) {
                 backButton.setAttribute('onclick', `window.location.hash = '${parentIntentId}'`);
                 backButton.innerHTML = '← Back';
             } else {
-                // For regular pages, back button goes to home
                 backButton.setAttribute('onclick', "window.location.hash = ''");
                 backButton.innerHTML = '← Back to Home';
             }
-            
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/page/${hash}`);
-                
+
                 if (!response.ok) {
                     if (isDetailPage && parentIntentId) {
                         const parts = hash.split('-detail-');
@@ -1610,7 +1632,7 @@ flowchart TD
                             return;
                         }
                     }
-                    
+
                     if (!isDetailPage) {
                         const isValidIntent = intents && intents.some((intent) => intent.id === hash);
                         if (isValidIntent) {
@@ -1624,7 +1646,7 @@ flowchart TD
                             throw new Error(errorData.error || 'Page not found. Please regenerate the page.');
                         }
                     }
-                    
+
                     const errorText = await response.text();
                     let errorData;
                     try {
@@ -1634,19 +1656,18 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Page not found');
                 }
-                
+
                 const data = await response.json();
-                
+
                 if (isDetailPage) {
                     showNotification('Detail page loaded successfully', 'success');
                 } else {
                     showNotification('Page loaded successfully', 'success');
                 }
                 console.log('[SUCCESS] Page HTML retrieved');
-                
+
                 mainContent.innerHTML = data.html;
                 
-                // Store parent intent ID for back navigation on detail pages
                 if (isDetailPage && parentIntentId) {
                     mainContent.setAttribute('data-parent-intent', parentIntentId);
                 }
@@ -1655,37 +1676,31 @@ flowchart TD
                     const intentCardsSection = createIntentCardsSection();
                     mainContent.insertAdjacentHTML('beforeend', intentCardsSection);
                     
-                    // Re-attach event listeners for intent cards
                     attachIntentCardListeners();
                 }
                 
-                // Attach detail page handlers if needed
                 attachDetailPageHandlers();
                 
-                // Add click handler for back links
                 const backLinks = mainContent.querySelectorAll('a[href^="#"]');
                 backLinks.forEach(link => {
                     const href = link.getAttribute('href');
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
                         if (href === '#') {
-                            // Back to home
                             window.location.hash = '';
                         } else if (href.startsWith('#')) {
-                            // Navigate to the hash
                             window.location.hash = href.replace('#', '');
                         }
                     });
                 });
-                
+
                 removeExternalNavigation();
             } catch (error) {
-                // Only show error if we're not in a loading state
                 if (!mainContent.innerHTML.includes('Generating detail page')) {
-                    const backLink = isDetailPage && parentIntentId 
+                    const backLink = isDetailPage && parentIntentId
                         ? `<a href="#${parentIntentId}" class="mt-4 inline-block font-semibold" style="color: var(--theme-primary, #3b82f6);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">← Back</a>`
                         : `<a href="#" class="mt-4 inline-block font-semibold" style="color: var(--theme-primary, #3b82f6);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">← Back to Home</a>`;
-                    
+
                     mainContent.innerHTML = `
                         <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                             <h2 class="text-xl font-bold text-red-800 mb-2">Error Loading Page</h2>
@@ -1696,12 +1711,11 @@ flowchart TD
                 }
             }
         }
-
-        // Attach handlers for detail page links
+        
         function attachDetailPageHandlers() {
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
-            
+
             const detailLinks = mainContent.querySelectorAll('a[href^="#"]');
             detailLinks.forEach(link => {
                 const href = link.getAttribute('href');
@@ -1716,20 +1730,19 @@ flowchart TD
                         const parentIntentId = parts[0];
                         const itemId = parts[1];
                         
-                        // Show loader immediately and navigate
                         showDetailPageLoader(detailPageId, parentIntentId);
                         window.location.hash = detailPageId;
                     });
                 }
             });
         }
-        
+
         function showDetailPageLoader(detailPageId, parentIntentId) {
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
-            
+
             mainContent.setAttribute('data-parent-intent', parentIntentId);
-            
+
             mainContent.innerHTML = `
                 <div class="flex items-center justify-center min-h-[400px]">
                     <div class="text-center">
@@ -1742,23 +1755,23 @@ flowchart TD
                     </div>
                 </div>
             `;
-            
+
             window.location.hash = detailPageId;
         }
-        
+
         async function generateDetailPageFromLink(intentId, itemId) {
             if (isGenerating) return;
             isGenerating = true;
-            
+
             showNotification(`Generating detail page for item...`, 'info');
             console.log('[DETAIL] Starting detail page generation');
             console.log('[DETAIL] Intent ID:', intentId);
             console.log('[DETAIL] Item ID:', itemId);
-            
+
             try {
                 showNotification('Searching for item in site data...', 'info');
                 console.log('[SEARCH] Searching for item in data structure');
-                
+
                 const response = await fetch(`${API_BASE_URL}/api/generate-detail-page`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1769,9 +1782,9 @@ flowchart TD
                         itemData: {}
                     })
                 });
-                
+
                 console.log('[RESPONSE] Received response:', response.status);
-                
+
                 if (!response.ok) {
                     const errorText = await response.text();
                     let errorData;
@@ -1782,16 +1795,16 @@ flowchart TD
                     }
                     throw new Error(errorData.error || 'Failed to generate detail page');
                 }
-                
+
                 const data = await response.json();
-                
+
                 showNotification('Item found, generating detail page with AI...', 'info');
                 console.log('[AI] Generating detail page HTML with Claude AI');
-                
+
                 showNotification('Detail page generated successfully!', 'success');
                 console.log('[SUCCESS] Detail page generated and stored');
                 console.log('[STORAGE] Detail page ID:', data.detailPageId);
-                
+
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash === data.detailPageId) {
                     window.location.hash = '';
@@ -1808,7 +1821,7 @@ flowchart TD
                 if (mainContent) {
                     const parts = window.location.hash.replace('#', '').split('-detail-');
                     const parentIntentId = parts.length === 2 ? parts[0] : intentId;
-                    
+
                     mainContent.innerHTML = `
                         <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                             <h2 class="text-xl font-bold text-red-800 mb-2">Error Generating Page</h2>
@@ -1823,9 +1836,9 @@ flowchart TD
                 isGenerating = false;
             }
         }
-        
+
         window.addEventListener('hashchange', handleHashChange);
-        
+
         window.addEventListener('load', () => {
             checkExistingSession().then(() => {
                 if (sessionId) {
@@ -1835,4 +1848,5 @@ flowchart TD
         });
     </script>
 </body>
+
 </html>

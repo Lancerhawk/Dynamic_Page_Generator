@@ -58,10 +58,10 @@ A dynamic, AI-powered single-page application (SPA) that generates pages on-dema
 
 **Step 6: Backend Creates Session**
 - Backend creates a unique session ID (timestamp-based)
-- Stores in memory:
-  - `sessionStore`: Complete site data for this session
-  - `intentStore`: Array of intent cards for this session
-  - `themeStore`: Theme colors for this session
+- Stores in Redis (production) or memory (development):
+  - Session data: Complete site data for this session
+  - Intents: Array of intent cards for this session
+  - Theme colors: Theme colors for this session
 - Returns to frontend: sessionId, siteName, heroData, intents, themeColors
 
 **Step 7: Frontend Displays Homepage**
@@ -87,7 +87,7 @@ A dynamic, AI-powered single-page application (SPA) that generates pages on-dema
   - `dataPath`: Where to find the relevant data in the site structure
 
 **Step 9: Backend Checks if Page Already Exists**
-- Backend checks `page-storage.ts` (in-memory Map) for existing page
+- Backend checks `page-storage.ts` (Redis or in-memory Map) for existing page
 - If page exists, returns immediately (no need to regenerate)
 - If not, proceeds to generation
 
@@ -116,7 +116,7 @@ A dynamic, AI-powered single-page application (SPA) that generates pages on-dema
   - Cleans up empty elements
 
 **Step 12: Backend Stores Generated Page**
-- `page-storage.ts` stores the HTML in memory with key = `intentId`
+- `page-storage.ts` stores the HTML in Redis (production) or memory (development) with key = `intentId`
 - Returns success response to frontend
 
 **Step 13: Frontend Updates UI**
@@ -135,7 +135,7 @@ A dynamic, AI-powered single-page application (SPA) that generates pages on-dema
 
 **Step 15: Frontend Loads Page Content**
 - Frontend sends GET request to `/api/page/{intentId}`
-- Backend retrieves HTML from `page-storage.ts`
+- Backend retrieves HTML from `page-storage.ts` (Redis or memory)
 - Returns HTML to frontend
 
 **Step 16: Frontend Injects Content**
@@ -341,8 +341,13 @@ dynamic_page_generator/
 │   │   ├── ai-intent-calculator.ts # AI-powered intent calculation
 │   │   ├── page-generator.ts       # Generates main pages with AI
 │   │   ├── detail-page-generator.ts # Generates detail pages with AI
-│   │   ├── page-storage.ts         # In-memory page storage
+│   │   ├── page-storage.ts         # Redis/in-memory page storage
+│   │   ├── session-storage.ts      # Redis/in-memory session storage
 │   │   └── anthropic-client.ts     # Claude API client
+│   ├── package.json
+│   └── tsconfig.json
+├── api/
+│   └── index.js                # Vercel serverless function entry point
 │   ├── package.json
 │   └── tsconfig.json
 ├── .env                         # Environment variables
@@ -369,6 +374,10 @@ ANTHROPIC_MODEL=claude-3-haiku-20240307
 
 # Server
 PORT=3000
+
+# Redis (Optional - for production/Vercel deployment)
+# Automatically set by Vercel when using Vercel Redis
+REDIS_URL=redis://...
 ```
 
 **Get your Anthropic API key:**
@@ -584,9 +593,23 @@ Disconnect session and clear all pages.
 
 All navigation uses hash fragments (`#menu`, `#contact`, `#find-properties-detail-property-123`) to avoid page reloads. The JavaScript listens for `hashchange` events and dynamically loads content.
 
-### In-Memory Storage
+### Persistent Storage (Redis)
 
-Generated pages are stored in memory using a `Map`. Pages persist for the lifetime of the server process. Sessions are also stored in memory and cleared on disconnect.
+The application uses Redis for persistent storage in production environments (Vercel). Sessions, intents, theme colors, and generated pages are stored in Redis with automatic fallback to in-memory storage for local development or if Redis is unavailable. This ensures data persistence across serverless function invocations.
+
+**Storage Strategy:**
+- **Production (Vercel)**: Uses Redis via `REDIS_URL` environment variable
+- **Development**: Falls back to in-memory `Map` storage
+- **Dual Write**: Always writes to memory as backup, then to Redis if available
+- **Read Strategy**: Tries Redis first, falls back to memory if Redis fails
+
+### Code Quality
+
+The codebase is production-ready with:
+- All comments removed for cleaner, more maintainable code
+- TypeScript for type safety
+- Comprehensive error handling
+- Extensive logging for debugging
 
 ### AI Model
 

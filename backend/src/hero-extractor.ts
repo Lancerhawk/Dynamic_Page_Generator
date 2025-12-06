@@ -24,7 +24,6 @@ export function extractHeroData(siteData: any): HeroData {
     subtitle = siteData.entries.navbar.tagline;
   }
   
-  // Check for hero section in pages
   if (!subtitle && siteData.pages) {
     for (const page of siteData.pages) {
       if (page.sitesections) {
@@ -45,10 +44,8 @@ export function extractHeroData(siteData: any): HeroData {
     else if (firstPage.subtitle) subtitle = firstPage.subtitle;
   }
 
-  // Extract hero image
   let image: string | null = null;
   
-  // Check for hero image in pages
   if (siteData.pages) {
     for (const page of siteData.pages) {
       if (page.sitesections) {

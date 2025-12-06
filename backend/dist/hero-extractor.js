@@ -19,7 +19,6 @@ function extractHeroData(siteData) {
     if (!subtitle && siteData.entries?.navbar?.tagline) {
         subtitle = siteData.entries.navbar.tagline;
     }
-    // Check for hero section in pages
     if (!subtitle && siteData.pages) {
         for (const page of siteData.pages) {
             if (page.sitesections) {
@@ -43,9 +42,7 @@ function extractHeroData(siteData) {
         else if (firstPage.subtitle)
             subtitle = firstPage.subtitle;
     }
-    // Extract hero image
     let image = null;
-    // Check for hero image in pages
     if (siteData.pages) {
         for (const page of siteData.pages) {
             if (page.sitesections) {

@@ -8,9 +8,9 @@ export interface ThemeColors {
 
 export async function extractThemeColors(siteData: any): Promise<ThemeColors> {
   const defaultTheme: ThemeColors = {
-    primary: '#3b82f6', // Blue
-    secondary: '#8b5cf6', // Purple
-    accent: '#f59e0b', // Amber
+    primary: '#3b82f6',
+    secondary: '#8b5cf6',
+    accent: '#f59e0b',
     background: '#ffffff',
     text: '#1f2937'
   };
@@ -42,7 +42,6 @@ export async function extractThemeColors(siteData: any): Promise<ThemeColors> {
     if (footer.text_color) colors.text = footer.text_color;
   }
 
-  // Check CSS variables or style settings
   if (siteData.styles) {
     const styles = siteData.styles;
     if (styles['--primary-color']) colors.primary = styles['--primary-color'];
@@ -61,7 +60,6 @@ export async function extractThemeColors(siteData: any): Promise<ThemeColors> {
     });
   }
 
-  // If we found colors manually, use them
   if (colors.primary || colors.secondary || colors.accent) {
     return {
       primary: colors.primary || defaultTheme.primary,

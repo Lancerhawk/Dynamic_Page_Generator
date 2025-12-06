@@ -26,7 +26,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Debug middleware to log all requests
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.path}`, {
     url: req.url,
@@ -39,7 +38,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Test endpoint to verify routing works
 app.get("/api/test", (req, res) => {
   res.json({ 
     success: true, 
@@ -49,7 +47,6 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// List all registered routes for debugging
 app.get("/api/debug/routes", (req, res) => {
   const routes: any[] = [];
   app._router?.stack?.forEach((middleware: any) => {
@@ -124,7 +121,6 @@ app.post("/api/connect", async (req, res) => {
     await setThemeColors(sessionId, themeColors);
     console.log('[Connect] Theme colors saved:', sessionId);
     
-    // Verify session was saved
     const verifySession = await getSession(sessionId);
     console.log('[Connect] Session verification:', verifySession ? '✅ Saved successfully' : '❌ Failed to save');
     
@@ -143,7 +139,6 @@ app.post("/api/connect", async (req, res) => {
   }
 });
 
-// POST /api/generate-page - Generate a specific page
 app.post("/api/generate-page", async (req, res) => {
   try {
     const { sessionId, intentId, dataPath } = req.body;
@@ -233,7 +228,6 @@ app.post("/api/generate-page", async (req, res) => {
   }
 });
 
-// GET /api/page-status/:intentId - Check if page is generated
 app.get("/api/page-status/:intentId", async (req, res) => {
   try {
     const { intentId } = req.params;
@@ -317,7 +311,6 @@ app.post("/api/regenerate-page", async (req, res) => {
   }
 });
 
-// GET /api/session/:sessionId - Check if session exists and get session data
 app.get("/api/session/:sessionId", async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -484,11 +477,9 @@ app.post("/api/generate-detail-page", async (req, res) => {
             return data[numericIndex];
           }
           
-          // Search each item in the array
           for (let i = 0; i < data.length; i++) {
             const item = data[i];
             if (item && typeof item === 'object') {
-              // Check multiple identifier fields
               const identifiers = [
                 item.id, item._id, item.slug, item.name, item.title, 
                 item.property_id, item.project_id, item.skill_name,
@@ -505,7 +496,6 @@ app.post("/api/generate-detail-page", async (req, res) => {
                 const idStr = String(identifier);
                 const normalizedIdentifier = idStr.toLowerCase().replace(/-/g, ' ').replace(/_/g, ' ').trim();
                 
-                // Try exact match (case insensitive)
                 if (idStr.toLowerCase() === searchId.toLowerCase()) {
                   console.log(`[Detail Page] Found item by exact match: ${idStr}`);
                   return item;
@@ -516,7 +506,6 @@ app.post("/api/generate-detail-page", async (req, res) => {
                   return item;
                 }
                 
-                // Try partial match (searchId might be part of identifier)
                 if (normalizedIdentifier.includes(normalizedSearchId) || normalizedSearchId.includes(normalizedIdentifier)) {
                   console.log(`[Detail Page] Found item by partial match: ${idStr} contains ${searchId}`);
                   return item;
@@ -528,7 +517,6 @@ app.post("/api/generate-detail-page", async (req, res) => {
             }
           }
         } else {
-          // Check if this object matches
           const identifiers = [
             data.id, data._id, data.slug, data.name, data.title, 
             data.property_id, data.project_id, data.skill_name,
@@ -562,16 +550,12 @@ app.post("/api/generate-detail-page", async (req, res) => {
         return null;
       }
       
-      // Try multiple search strategies
       finalItemData = findItemInData(relevantData, itemId);
       
-      // If not found and relevantData is a string/primitive, search parent sections
       if (!finalItemData && (typeof relevantData === 'string' || typeof relevantData !== 'object')) {
         console.log(`[Detail Page] relevantData is ${typeof relevantData}, searching parent section...`);
         
-        // Try to find dishes/items in the parent section
         const pathParts = dataPath.split(/[\.\[\]]/).filter(Boolean);
-        // Try to find parent section (remove last 1-2 parts)
         for (let removeCount = 1; removeCount <= 2 && pathParts.length > removeCount; removeCount++) {
           const parentPath = pathParts.slice(0, -removeCount).join('.');
           if (parentPath) {
@@ -590,7 +574,6 @@ app.post("/api/generate-detail-page", async (req, res) => {
               }
               if (finalItemData) break;
               
-              // Also search the section itself
               const found = findItemInData(parentSection, itemId);
               if (found) {
                 finalItemData = found;
@@ -630,13 +613,10 @@ app.post("/api/generate-detail-page", async (req, res) => {
       console.log(`[Detail Page] Found item! Keys:`, Object.keys(finalItemData).slice(0, 10));
     }
     
-    // Extract item title from finalItemData
     const itemTitle = finalItemData.title || finalItemData.name || finalItemData.property_title || finalItemData.project_name || finalItemData.skill_name || itemId;
     
-    // Get theme colors
     const themeColors = await getThemeColors(sessionId);
     
-    // Generate detail page HTML
     const detailPageHtml = await generateDetailPageForItem(
       intentTitle,
       itemTitle,
@@ -645,15 +625,14 @@ app.post("/api/generate-detail-page", async (req, res) => {
         _context: {
           siteName,
           intentTitle,
-          fullSiteData: siteData // Include full siteData for additional context
+          fullSiteData: siteData
         }
       },
       siteName,
       themeColors,
-      intentId // Pass intentId for back link
+      intentId
     );
     
-    // Store the detail page
     await storePage(detailPageId, detailPageHtml);
     
     return res.json({
@@ -685,14 +664,12 @@ app.get("/api/page/:intentId", async (req, res) => {
   }
 });
 
-// Diagnostic endpoint to check Redis setup
 app.get("/api/debug/kv-status", async (req, res) => {
   try {
     const envVars = {
       REDIS_URL: process.env.REDIS_URL ? '✅ Set' : '❌ Not set',
     };
     
-    // Test Redis connection if available
     let redisTest = 'Not tested';
     if (process.env.REDIS_URL) {
       try {
@@ -726,19 +703,14 @@ if (process.env.VERCEL) {
   frontendPath = path.join(__dirname, "../../frontend");
 }
 
-// Serve static files from frontend (but only for non-API routes)
 app.use((req, res, next) => {
-  // Skip static file serving for API routes
   if (req.path.startsWith('/api/')) {
     return next();
   }
   express.static(frontendPath)(req, res, next);
 });
 
-// Catch-all route for frontend (SPA routing) - must be last
-// Only match non-API routes
 app.get("*", (req, res, next) => {
-  // Skip API routes
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: "API route not found", path: req.path });
   }

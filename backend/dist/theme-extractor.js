@@ -4,9 +4,9 @@ exports.extractThemeColors = extractThemeColors;
 exports.getColorDescription = getColorDescription;
 async function extractThemeColors(siteData) {
     const defaultTheme = {
-        primary: '#3b82f6', // Blue
-        secondary: '#8b5cf6', // Purple
-        accent: '#f59e0b', // Amber
+        primary: '#3b82f6',
+        secondary: '#8b5cf6',
+        accent: '#f59e0b',
         background: '#ffffff',
         text: '#1f2937'
     };
@@ -46,7 +46,6 @@ async function extractThemeColors(siteData) {
         if (footer.text_color)
             colors.text = footer.text_color;
     }
-    // Check CSS variables or style settings
     if (siteData.styles) {
         const styles = siteData.styles;
         if (styles['--primary-color'])
@@ -67,7 +66,6 @@ async function extractThemeColors(siteData) {
                 colors.accent = page.accent_color;
         });
     }
-    // If we found colors manually, use them
     if (colors.primary || colors.secondary || colors.accent) {
         return {
             primary: colors.primary || defaultTheme.primary,

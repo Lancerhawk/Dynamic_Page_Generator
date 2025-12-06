@@ -1,37 +1,31 @@
-// Session storage using Redis in production, in-memory Map in development
 let redisClient: any = null;
 let redisConnected: boolean = false;
 let redisInitializing: boolean = false;
 let redisInitPromise: Promise<void> | null = null;
 
-// Initialize Redis connection (async)
 async function initializeRedis(): Promise<void> {
-  // If already initialized and connected, return immediately
   if (redisClient && redisConnected) {
     console.log('[initializeRedis] Redis already initialized and connected');
     return Promise.resolve();
   }
   
-  // If there's an existing promise, wait for it
   if (redisInitPromise) {
     console.log('[initializeRedis] Already initializing, waiting for existing promise...');
     try {
       await redisInitPromise;
       console.log('[initializeRedis] Existing promise completed, redisClient exists:', !!redisClient);
-      // If redisClient is still null after promise, something went wrong
       if (!redisClient) {
         console.error('[initializeRedis] WARNING: Promise completed but redisClient is still null! Re-initializing...');
-        redisInitPromise = null; // Reset to allow retry
+        redisInitPromise = null;
       } else {
-        return; // Success
+        return;
       }
     } catch (err: any) {
       console.error('[initializeRedis] Existing promise failed:', err.message);
-      redisInitPromise = null; // Reset to allow retry
+      redisInitPromise = null;
     }
   }
   
-  // If redisClient exists but not connected, try to reconnect
   if (redisClient && !redisConnected) {
     console.log('[initializeRedis] redisClient exists but not connected, trying to reconnect...');
     try {
@@ -41,7 +35,7 @@ async function initializeRedis(): Promise<void> {
       return;
     } catch (err: any) {
       console.error('[initializeRedis] Reconnection failed:', err.message);
-      redisClient = null; // Reset redisClient to allow fresh initialization
+      redisClient = null;
     }
   }
   
@@ -70,16 +64,12 @@ async function initializeRedis(): Promise<void> {
       
       if (redisUrl) {
         try {
-          // Try to require ioredis - check if it's available
-          // First try global (set by api/index.js), then try require
           let Redis;
           try {
-            // Try global first (set by api/index.js for Vercel)
             if (typeof global !== 'undefined' && (global as any).ioredis) {
               Redis = (global as any).ioredis;
               console.log('📦 [initializeRedis] ioredis loaded from global (Vercel bundled)');
             } else {
-              // Fallback to normal require
               Redis = require('ioredis');
               console.log('📦 [initializeRedis] ioredis module loaded via require');
             }
@@ -140,7 +130,6 @@ async function initializeRedis(): Promise<void> {
             redisConnected = false;
           });
           
-          // Wait for connection with timeout
           console.log('[initializeRedis] Waiting for Redis PING (timeout: 5s)...');
           try {
             await Promise.race([
@@ -160,7 +149,7 @@ async function initializeRedis(): Promise<void> {
           console.error('❌ [initializeRedis] Error stack:', error.stack);
           redisClient = null;
           redisConnected = false;
-          throw error; // Re-throw so caller knows it failed
+          throw error;
         }
       } else {
         console.log('ℹ️ [initializeRedis] REDIS_URL not set, using in-memory storage only');
@@ -171,10 +160,9 @@ async function initializeRedis(): Promise<void> {
       console.error('⚠️ [initializeRedis] Error stack:', error.stack);
       redisConnected = false;
       redisClient = null;
-      throw error; // Re-throw so caller knows it failed
+      throw error;
     } finally {
       redisInitializing = false;
-      // Reset promise on failure so it can retry
       if (!redisClient) {
         console.log('[initializeRedis] Resetting promise (will allow retry on next call)');
         redisInitPromise = null;
@@ -185,26 +173,22 @@ async function initializeRedis(): Promise<void> {
   return redisInitPromise;
 }
 
-// CRITICAL: Initialize Redis immediately at module load
 initializeRedis().catch(err => {
   console.error('❌ [Module Load] Failed to initialize Redis at module load:', err.message);
   console.error('❌ [Module Load] Error stack:', err.stack);
   console.error('❌ [Module Load] This is non-fatal - Redis will retry on first use');
-  // Don't throw - allow the module to load even if Redis fails
   redisClient = null;
   redisConnected = false;
-  redisInitPromise = null; // Reset so it can retry later
+  redisInitPromise = null;
 });
 
-// Fallback to in-memory storage
 const memoryStore = new Map<string, any>();
 const memoryIntentStore = new Map<string, any[]>();
 const memoryThemeStore = new Map<string, any>();
 
-const SESSION_TTL = 60 * 60 * 24; // 24 hours in seconds
+const SESSION_TTL = 60 * 60 * 24;
 
 export async function setSession(sessionId: string, siteData: any): Promise<void> {
-  // Ensure Redis is initialized - WAIT for it to complete
   try {
     await initializeRedis();
   } catch (err: any) {
@@ -213,7 +197,6 @@ export async function setSession(sessionId: string, siteData: any): Promise<void
   
   const key = `session:${sessionId}`;
   
-  // Check actual Redis connection status (not just flag)
   const hasRedis = !!redisClient;
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
@@ -221,19 +204,16 @@ export async function setSession(sessionId: string, siteData: any): Promise<void
   console.log('[setSession] Redis state - redisClient exists:', hasRedis, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
   console.log('[setSession] REDIS_URL env:', process.env.REDIS_URL ? 'Set (' + process.env.REDIS_URL.substring(0, 20) + '...)' : 'NOT SET');
   
-  // ALWAYS write to memory as backup (even if Redis is available)
   memoryStore.set(sessionId, siteData);
   console.log('[setSession] Stored in memory as backup');
   
-  // Also write to Redis if redisClient exists (try even if status is unknown)
   if (redisClient) {
     try {
-      // Try ping to verify connection
       await redisClient.ping();
       console.log('[setSession] Redis PING successful, trying to set data');
       const result = await redisClient.set(key, JSON.stringify(siteData), 'EX', SESSION_TTL);
       console.log('[setSession] Redis set result:', result);
-      redisConnected = true; // Update flag on success
+      redisConnected = true;
     } catch (error: any) {
       console.error('[setSession] Redis error:', error.message);
       console.error('[setSession] Redis error stack:', error.stack);
@@ -246,7 +226,6 @@ export async function setSession(sessionId: string, siteData: any): Promise<void
 }
 
 export async function getSession(sessionId: string): Promise<any | null> {
-  // Ensure Redis is initialized - WAIT for it to complete with timeout
   try {
     console.log('[getSession] Waiting for Redis initialization...');
     await Promise.race([
@@ -259,13 +238,10 @@ export async function getSession(sessionId: string): Promise<any | null> {
   } catch (err: any) {
     console.error('[getSession] Redis initialization error:', err.message);
     console.error('[getSession] Redis initialization error stack:', err.stack);
-    // Continue anyway - might still work if kv was set before timeout
   }
   
   const key = `session:${sessionId}`;
   
-  // Check actual Redis connection status (not just flag)
-  // If redisClient exists, try to use it even if status is unknown
   const hasRedis = !!redisClient;
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
@@ -273,10 +249,8 @@ export async function getSession(sessionId: string): Promise<any | null> {
   console.log('[getSession] Redis state - redisClient exists:', hasRedis, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
   console.log('[getSession] REDIS_URL env:', process.env.REDIS_URL ? 'Set (' + process.env.REDIS_URL.substring(0, 20) + '...)' : 'NOT SET');
   
-  // Try Redis if redisClient exists (even if status is unknown - might be connecting)
   if (redisClient) {
     try {
-      // Try ping to verify connection
       await redisClient.ping();
       console.log('[getSession] Redis PING successful, trying to get data');
       const data = await redisClient.get(key);
@@ -285,9 +259,8 @@ export async function getSession(sessionId: string): Promise<any | null> {
       if (data) {
         const parsed = typeof data === 'string' ? JSON.parse(data) : data;
         console.log('[getSession] Parsed successfully from Redis');
-        // Also update memory cache
         memoryStore.set(sessionId, parsed);
-        redisConnected = true; // Update flag on success
+        redisConnected = true;
         return parsed;
       }
     } catch (error: any) {
@@ -301,7 +274,6 @@ export async function getSession(sessionId: string): Promise<any | null> {
     console.log('[getSession] Check logs above for initialization errors');
   }
   
-  // Fallback to memory
   const memoryData = memoryStore.get(sessionId);
   console.log('[getSession] Memory result:', memoryData ? 'Found' : 'Not found');
   return memoryData || null;
@@ -323,10 +295,8 @@ export async function deleteSession(sessionId: string): Promise<void> {
 export async function setIntents(sessionId: string, intents: any[]): Promise<void> {
   await initializeRedis();
   
-  // Check actual Redis connection status
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
-  // ALWAYS store in memory as backup
   memoryIntentStore.set(sessionId, intents);
   
   if (redisClient && isRedisReady) {
@@ -344,7 +314,6 @@ export async function setIntents(sessionId: string, intents: any[]): Promise<voi
 export async function getIntents(sessionId: string): Promise<any[]> {
   await initializeRedis();
   
-  // Check actual Redis connection status
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
   if (redisClient && isRedisReady) {
@@ -353,7 +322,6 @@ export async function getIntents(sessionId: string): Promise<any[]> {
       const data = await redisClient.get(`intents:${sessionId}`);
       if (data) {
         const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-        // Also update memory cache
         memoryIntentStore.set(sessionId, parsed);
         redisConnected = true;
         return parsed;
@@ -383,10 +351,8 @@ export async function deleteIntents(sessionId: string): Promise<void> {
 export async function setThemeColors(sessionId: string, themeColors: any): Promise<void> {
   await initializeRedis();
   
-  // Check actual Redis connection status
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
-  // ALWAYS store in memory as backup
   memoryThemeStore.set(sessionId, themeColors);
   
   if (redisClient && isRedisReady) {
@@ -404,7 +370,6 @@ export async function setThemeColors(sessionId: string, themeColors: any): Promi
 export async function getThemeColors(sessionId: string): Promise<any> {
   await initializeRedis();
   
-  // Check actual Redis connection status
   const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
   
   if (redisClient && isRedisReady) {
@@ -413,7 +378,6 @@ export async function getThemeColors(sessionId: string): Promise<any> {
       const data = await redisClient.get(`theme:${sessionId}`);
       if (data) {
         const parsed = typeof data === 'string' ? JSON.parse(data) : data;
-        // Also update memory cache
         memoryThemeStore.set(sessionId, parsed);
         redisConnected = true;
         return parsed;

@@ -62,7 +62,7 @@ DETAIL PAGE BUTTONS (CRITICAL - MUST ADD THESE):
         }
         for (const [key, value] of Object.entries(obj)) {
             if (key === '_context')
-                continue; // Skip context object
+                continue;
             if (imageFields.includes(key.toLowerCase()) && typeof value === 'string' && value.match(/\.(jpg|jpeg|png|gif|webp|svg)/i)) {
                 const currentItemName = itemName || obj.name || obj.title || obj.dish_name || obj.property_name || path.split('.').pop() || 'Unknown';
                 imageMap.set(value, { url: value, itemPath: path, itemName: currentItemName });
@@ -277,7 +277,7 @@ Return ONLY the HTML content for the <main> section.`;
     const model = process.env.ANTHROPIC_MODEL || "claude-3-haiku-20240307";
     const msg = await client.messages.create({
         model: model,
-        max_tokens: 4096, // Keep within token limit
+        max_tokens: 4096,
         temperature: 0.4,
         system: systemPrompt,
         messages: [

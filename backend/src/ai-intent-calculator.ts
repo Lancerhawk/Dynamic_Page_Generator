@@ -5,7 +5,7 @@ export interface IntentCard {
   title: string;
   description: string;
   icon: string;
-  dataPath: string; // Path in data structure (e.g., "entries.navbar", "pages[0]")
+  dataPath: string;
 }
 
 export async function calculateIntentsWithAI(siteData: any): Promise<IntentCard[]> {
