@@ -1,18 +1,90 @@
-// Session storage using Vercel KV (Redis) in production, in-memory Map in development
+// Session storage using Redis in production, in-memory Map in development
 let kv: any = null;
 
-// Try to initialize Vercel KV if available
+// Try to initialize Redis if available
 try {
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-    const vercelKv = require('@vercel/kv');
-    // Handle both v2 (named export) and v3+ (default export) styles
-    kv = vercelKv.kv || vercelKv.default || vercelKv;
-    if (kv) {
-      console.log('Using Vercel KV for session storage');
+  // Check for REDIS_URL (Vercel Redis) or KV_REST_API_URL (Vercel KV)
+  const redisUrl = process.env.REDIS_URL;
+  const kvUrl = process.env.KV_REST_API_URL || process.env.KV_URL;
+  const kvToken = process.env.KV_REST_API_TOKEN || process.env.KV_TOKEN;
+  
+  // Log what we found
+  console.log('🔍 Checking Redis/KV environment variables...');
+  console.log('REDIS_URL:', redisUrl ? '✅ Set' : '❌ Not set');
+  console.log('KV_REST_API_URL:', process.env.KV_REST_API_URL ? '✅ Set' : '❌ Not set');
+  console.log('KV_REST_API_TOKEN:', process.env.KV_REST_API_TOKEN ? '✅ Set' : '❌ Not set');
+  
+  // Priority 1: Use REDIS_URL with ioredis (Vercel Redis)
+  if (redisUrl) {
+    try {
+      const Redis = require('ioredis');
+      console.log('📦 Using ioredis with REDIS_URL');
+      kv = new Redis(redisUrl, {
+        maxRetriesPerRequest: 3,
+        retryStrategy: (times: number) => {
+          const delay = Math.min(times * 50, 2000);
+          return delay;
+        },
+        reconnectOnError: (err: Error) => {
+          const targetError = 'READONLY';
+          if (err.message.includes(targetError)) {
+            return true;
+          }
+          return false;
+        }
+      });
+      
+      // Test connection
+      kv.ping().then(() => {
+        console.log('✅ Redis connection successful (PING)');
+      }).catch((err: any) => {
+        console.log('⚠️ Redis PING test failed:', err.message);
+      });
+      
+      // Handle connection events
+      kv.on('connect', () => {
+        console.log('✅ Redis client connected');
+      });
+      
+      kv.on('error', (err: Error) => {
+        console.error('❌ Redis connection error:', err.message);
+      });
+      
+    } catch (error: any) {
+      console.log('⚠️ Failed to initialize ioredis:', error.message);
     }
   }
-} catch (error) {
-  console.log('Vercel KV not available, using in-memory storage');
+  // Priority 2: Use Vercel KV (@vercel/kv)
+  else if (kvUrl) {
+    try {
+      const vercelKv = require('@vercel/kv');
+      console.log('📦 Using @vercel/kv');
+      
+      if (vercelKv.createClient) {
+        kv = vercelKv.createClient({
+          url: kvUrl,
+          token: kvToken || undefined
+        });
+      } else if (vercelKv.kv) {
+        kv = vercelKv.kv;
+      } else {
+        kv = vercelKv.default || vercelKv;
+      }
+      
+      if (kv) {
+        console.log('✅ Vercel KV client initialized');
+      }
+    } catch (error: any) {
+      console.log('⚠️ Failed to initialize @vercel/kv:', error.message);
+    }
+  }
+  
+  if (!kv) {
+    console.log('ℹ️ No Redis/KV connection available, using in-memory storage');
+  }
+} catch (error: any) {
+  console.log('⚠️ Redis/KV initialization failed, using in-memory storage');
+  console.log('Error:', error.message);
 }
 
 // Fallback to in-memory storage
@@ -24,7 +96,24 @@ const SESSION_TTL = 60 * 60 * 24; // 24 hours in seconds
 
 export async function setSession(sessionId: string, siteData: any): Promise<void> {
   if (kv) {
-    await kv.set(`session:${sessionId}`, JSON.stringify(siteData), { ex: SESSION_TTL });
+    try {
+      // ioredis uses 'EX' as third parameter, @vercel/kv uses { ex: ttl }
+      if (kv.set && typeof kv.set === 'function') {
+        // Try ioredis style first (EX parameter)
+        try {
+          await kv.set(`session:${sessionId}`, JSON.stringify(siteData), 'EX', SESSION_TTL);
+        } catch {
+          // Fallback to @vercel/kv style
+          await kv.set(`session:${sessionId}`, JSON.stringify(siteData), { ex: SESSION_TTL });
+        }
+      } else {
+        throw new Error('KV client does not have set method');
+      }
+    } catch (error: any) {
+      console.error('KV setSession error:', error.message);
+      // Fallback to memory on error
+      memoryStore.set(sessionId, siteData);
+    }
   } else {
     memoryStore.set(sessionId, siteData);
   }
@@ -32,8 +121,14 @@ export async function setSession(sessionId: string, siteData: any): Promise<void
 
 export async function getSession(sessionId: string): Promise<any | null> {
   if (kv) {
-    const data = await kv.get(`session:${sessionId}`);
-    return data ? (typeof data === 'string' ? JSON.parse(data) : data) : null;
+    try {
+      const data = await kv.get(`session:${sessionId}`);
+      return data ? (typeof data === 'string' ? JSON.parse(data) : data) : null;
+    } catch (error: any) {
+      console.error('KV getSession error:', error.message);
+      // Fallback to memory on error
+      return memoryStore.get(sessionId) || null;
+    }
   } else {
     return memoryStore.get(sessionId) || null;
   }
@@ -49,7 +144,16 @@ export async function deleteSession(sessionId: string): Promise<void> {
 
 export async function setIntents(sessionId: string, intents: any[]): Promise<void> {
   if (kv) {
-    await kv.set(`intents:${sessionId}`, JSON.stringify(intents), { ex: SESSION_TTL });
+    try {
+      try {
+        await kv.set(`intents:${sessionId}`, JSON.stringify(intents), 'EX', SESSION_TTL);
+      } catch {
+        await kv.set(`intents:${sessionId}`, JSON.stringify(intents), { ex: SESSION_TTL });
+      }
+    } catch (error: any) {
+      console.error('KV setIntents error:', error.message);
+      memoryIntentStore.set(sessionId, intents);
+    }
   } else {
     memoryIntentStore.set(sessionId, intents);
   }
@@ -74,7 +178,16 @@ export async function deleteIntents(sessionId: string): Promise<void> {
 
 export async function setThemeColors(sessionId: string, themeColors: any): Promise<void> {
   if (kv) {
-    await kv.set(`theme:${sessionId}`, JSON.stringify(themeColors), { ex: SESSION_TTL });
+    try {
+      try {
+        await kv.set(`theme:${sessionId}`, JSON.stringify(themeColors), 'EX', SESSION_TTL);
+      } catch {
+        await kv.set(`theme:${sessionId}`, JSON.stringify(themeColors), { ex: SESSION_TTL });
+      }
+    } catch (error: any) {
+      console.error('KV setThemeColors error:', error.message);
+      memoryThemeStore.set(sessionId, themeColors);
+    }
   } else {
     memoryThemeStore.set(sessionId, themeColors);
   }

@@ -3,21 +3,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.storePage = storePage;
 exports.getPage = getPage;
 exports.clearAllPages = clearAllPages;
-// Page storage using Vercel KV (Redis) in production, in-memory Map in development
+// Page storage using Redis in production, in-memory Map in development
 let kv = null;
-// Try to initialize Vercel KV if available
+// Try to initialize Redis (reuse same connection logic as session-storage)
 try {
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    const redisUrl = process.env.REDIS_URL;
+    const kvUrl = process.env.KV_REST_API_URL || process.env.KV_URL;
+    const kvToken = process.env.KV_REST_API_TOKEN || process.env.KV_TOKEN;
+    if (redisUrl) {
+        const Redis = require('ioredis');
+        kv = new Redis(redisUrl);
+    }
+    else if (kvUrl) {
         const vercelKv = require('@vercel/kv');
-        // Handle both v2 (named export) and v3+ (default export) styles
-        kv = vercelKv.kv || vercelKv.default || vercelKv;
-        if (kv) {
-            console.log('Using Vercel KV for page storage');
+        if (vercelKv.createClient) {
+            kv = vercelKv.createClient({ url: kvUrl, token: kvToken || undefined });
+        }
+        else if (vercelKv.kv) {
+            kv = vercelKv.kv;
+        }
+        else {
+            kv = vercelKv.default || vercelKv;
         }
     }
 }
 catch (error) {
-    console.log('Vercel KV not available, using in-memory storage for pages');
+    // Silent fail - will use memory storage
 }
 // Fallback to in-memory storage
 const memoryPageStore = new Map();
@@ -28,7 +39,18 @@ async function storePage(intentId, html) {
         timestamp: Date.now()
     };
     if (kv) {
-        await kv.set(`page:${intentId}`, JSON.stringify(pageData), { ex: PAGE_TTL });
+        try {
+            try {
+                await kv.set(`page:${intentId}`, JSON.stringify(pageData), 'EX', PAGE_TTL);
+            }
+            catch {
+                await kv.set(`page:${intentId}`, JSON.stringify(pageData), { ex: PAGE_TTL });
+            }
+        }
+        catch (error) {
+            console.error('KV storePage error:', error.message);
+            memoryPageStore.set(intentId, pageData);
+        }
     }
     else {
         memoryPageStore.set(intentId, pageData);

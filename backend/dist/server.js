@@ -509,6 +509,29 @@ app.get("/api/page/:intentId", async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 });
+// Diagnostic endpoint to check KV setup
+app.get("/api/debug/kv-status", (req, res) => {
+    try {
+        const envVars = {
+            REDIS_URL: process.env.REDIS_URL ? '✅ Set' : '❌ Not set',
+            KV_REST_API_URL: process.env.KV_REST_API_URL ? '✅ Set' : '❌ Not set',
+            KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN ? '✅ Set' : '❌ Not set',
+            KV_URL: process.env.KV_URL ? '✅ Set' : '❌ Not set',
+            KV_TOKEN: process.env.KV_TOKEN ? '✅ Set' : '❌ Not set',
+        };
+        return res.json({
+            environment: process.env.NODE_ENV || 'development',
+            vercel: !!process.env.VERCEL,
+            envVars: envVars,
+            usingRedis: !!process.env.REDIS_URL,
+            usingVercelKV: !!(process.env.KV_REST_API_URL || process.env.KV_URL),
+            message: 'REDIS_URL is used for Vercel Redis, KV_REST_API_URL for Vercel KV'
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
 let frontendPath;
 if (process.env.VERCEL) {
     frontendPath = path_1.default.join(process.cwd(), "frontend");
