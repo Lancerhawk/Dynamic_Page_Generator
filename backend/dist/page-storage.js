@@ -106,33 +106,43 @@ async function storePage(intentId, html) {
         html,
         timestamp: Date.now()
     };
-    console.log('[storePage] Storing page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected);
+    // Check actual Redis connection status (not just flag)
+    const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+    console.log('[storePage] Storing page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
     // ALWAYS write to memory as backup (even if Redis is available)
     memoryPageStore.set(intentId, pageData);
     console.log('[storePage] Stored in memory as backup');
-    // Also write to Redis if available
-    if (kv && redisConnected) {
+    // Also write to Redis if available - try even if flag says no (connection might be ready)
+    if (kv && isRedisReady) {
         try {
+            // Verify connection with ping first
+            await kv.ping();
             const result = await kv.set(key, JSON.stringify(pageData), 'EX', PAGE_TTL);
             console.log('[storePage] Redis set result:', result);
+            redisConnected = true; // Update flag on success
         }
         catch (error) {
             console.error('[storePage] Redis error:', error.message);
+            redisConnected = false;
             console.log('[storePage] Using memory storage (already stored)');
         }
     }
     else {
-        console.log('[storePage] Using memory storage only (no Redis)');
+        console.log('[storePage] Using memory storage only (no Redis connection)');
     }
 }
 async function getPage(intentId) {
     // Ensure Redis is initialized
     await initializeRedis();
     const key = `page:${intentId}`;
-    console.log('[getPage] Fetching page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected);
-    // Try Redis first if available
-    if (kv && redisConnected) {
+    // Check actual Redis connection status (not just flag)
+    const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+    console.log('[getPage] Fetching page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
+    // Try Redis first if available - try even if flag says no (connection might be ready)
+    if (kv && isRedisReady) {
         try {
+            // Verify connection with ping first
+            await kv.ping();
             const data = await kv.get(key);
             console.log('[getPage] Redis get result:', data ? 'Found data' : 'No data');
             if (data) {
@@ -140,11 +150,13 @@ async function getPage(intentId) {
                 console.log('[getPage] Parsed successfully from Redis');
                 // Also update memory cache
                 memoryPageStore.set(intentId, pageData);
+                redisConnected = true; // Update flag on success
                 return pageData.html;
             }
         }
         catch (error) {
             console.error('[getPage] Redis error:', error.message);
+            redisConnected = false;
         }
     }
     // Fallback to memory

@@ -118,23 +118,30 @@ export async function setSession(sessionId: string, siteData: any): Promise<void
   
   const key = `session:${sessionId}`;
   
-  console.log('[setSession] Storing session:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected);
+  // Check actual Redis connection status (not just flag)
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+  
+  console.log('[setSession] Storing session:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
   
   // ALWAYS write to memory as backup (even if Redis is available)
   memoryStore.set(sessionId, siteData);
   console.log('[setSession] Stored in memory as backup');
   
-  // Also write to Redis if available
-  if (kv && redisConnected) {
+  // Also write to Redis if available - try even if flag says no (connection might be ready)
+  if (kv && isRedisReady) {
     try {
+      // Verify connection with ping first
+      await kv.ping();
       const result = await kv.set(key, JSON.stringify(siteData), 'EX', SESSION_TTL);
       console.log('[setSession] Redis set result:', result);
+      redisConnected = true; // Update flag on success
     } catch (error: any) {
       console.error('[setSession] Redis error:', error.message);
+      redisConnected = false;
       console.log('[setSession] Using memory storage (already stored)');
     }
   } else {
-    console.log('[setSession] Using memory storage only (no Redis)');
+    console.log('[setSession] Using memory storage only (no Redis connection)');
   }
 }
 
@@ -144,11 +151,16 @@ export async function getSession(sessionId: string): Promise<any | null> {
   
   const key = `session:${sessionId}`;
   
-  console.log('[getSession] Fetching:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected);
+  // Check actual Redis connection status (not just flag)
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
   
-  // Try Redis first if available
-  if (kv && redisConnected) {
+  console.log('[getSession] Fetching:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
+  
+  // Try Redis first if available - try even if flag says no (connection might be ready)
+  if (kv && isRedisReady) {
     try {
+      // Verify connection with ping first
+      await kv.ping();
       const data = await kv.get(key);
       console.log('[getSession] Redis get result:', data ? 'Found data' : 'No data');
       
@@ -157,10 +169,12 @@ export async function getSession(sessionId: string): Promise<any | null> {
         console.log('[getSession] Parsed successfully from Redis');
         // Also update memory cache
         memoryStore.set(sessionId, parsed);
+        redisConnected = true; // Update flag on success
         return parsed;
       }
     } catch (error: any) {
       console.error('[getSession] Redis error:', error.message);
+      redisConnected = false;
     }
   }
   
@@ -186,14 +200,20 @@ export async function deleteSession(sessionId: string): Promise<void> {
 export async function setIntents(sessionId: string, intents: any[]): Promise<void> {
   await initializeRedis();
   
+  // Check actual Redis connection status
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+  
   // ALWAYS store in memory as backup
   memoryIntentStore.set(sessionId, intents);
   
-  if (kv && redisConnected) {
+  if (kv && isRedisReady) {
     try {
+      await kv.ping();
       await kv.set(`intents:${sessionId}`, JSON.stringify(intents), 'EX', SESSION_TTL);
+      redisConnected = true;
     } catch (error: any) {
       console.error('[setIntents] Redis error:', error.message);
+      redisConnected = false;
     }
   }
 }
@@ -201,17 +221,23 @@ export async function setIntents(sessionId: string, intents: any[]): Promise<voi
 export async function getIntents(sessionId: string): Promise<any[]> {
   await initializeRedis();
   
-  if (kv && redisConnected) {
+  // Check actual Redis connection status
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+  
+  if (kv && isRedisReady) {
     try {
+      await kv.ping();
       const data = await kv.get(`intents:${sessionId}`);
       if (data) {
         const parsed = typeof data === 'string' ? JSON.parse(data) : data;
         // Also update memory cache
         memoryIntentStore.set(sessionId, parsed);
+        redisConnected = true;
         return parsed;
       }
     } catch (error: any) {
       console.error('[getIntents] Redis error:', error.message);
+      redisConnected = false;
     }
   }
   
@@ -234,14 +260,20 @@ export async function deleteIntents(sessionId: string): Promise<void> {
 export async function setThemeColors(sessionId: string, themeColors: any): Promise<void> {
   await initializeRedis();
   
+  // Check actual Redis connection status
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+  
   // ALWAYS store in memory as backup
   memoryThemeStore.set(sessionId, themeColors);
   
-  if (kv && redisConnected) {
+  if (kv && isRedisReady) {
     try {
+      await kv.ping();
       await kv.set(`theme:${sessionId}`, JSON.stringify(themeColors), 'EX', SESSION_TTL);
+      redisConnected = true;
     } catch (error: any) {
       console.error('[setThemeColors] Redis error:', error.message);
+      redisConnected = false;
     }
   }
 }
@@ -249,17 +281,23 @@ export async function setThemeColors(sessionId: string, themeColors: any): Promi
 export async function getThemeColors(sessionId: string): Promise<any> {
   await initializeRedis();
   
-  if (kv && redisConnected) {
+  // Check actual Redis connection status
+  const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
+  
+  if (kv && isRedisReady) {
     try {
+      await kv.ping();
       const data = await kv.get(`theme:${sessionId}`);
       if (data) {
         const parsed = typeof data === 'string' ? JSON.parse(data) : data;
         // Also update memory cache
         memoryThemeStore.set(sessionId, parsed);
+        redisConnected = true;
         return parsed;
       }
     } catch (error: any) {
       console.error('[getThemeColors] Redis error:', error.message);
+      redisConnected = false;
     }
   }
   
