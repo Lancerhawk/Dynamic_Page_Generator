@@ -484,7 +484,7 @@ flowchart TD
                 <div class="flex-1">
                     <p class="text-sm font-medium">${message}</p>
                 </div>
-                <button onclick="removeNotification('${notificationId}')" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition">
+                <button type="button" onclick="removeNotification('${notificationId}')" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition cursor-pointer" style="outline: none; border: none; background: transparent;">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
@@ -494,6 +494,18 @@ flowchart TD
             container.appendChild(notification);
             
             activeNotifications.push({ id: notificationId, element: notification, timestamp: Date.now() });
+            
+            // Add event listener to close button as backup (in case onclick doesn't work)
+            setTimeout(() => {
+                const closeButton = notification.querySelector('button[onclick*="removeNotification"]');
+                if (closeButton) {
+                    closeButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        removeNotification(notificationId);
+                    });
+                }
+            }, 50);
             
             setTimeout(() => {
                 notification.style.opacity = '1';
@@ -509,21 +521,40 @@ flowchart TD
 
         function removeNotification(id) {
             const notification = document.getElementById(id);
-            if (!notification) return;
-            
-            const index = activeNotifications.findIndex(n => n.id === id);
-            if (index === -1) return;
-            
-            if (notification.dataset.timeoutId) {
-                clearTimeout(parseInt(notification.dataset.timeoutId));
+            if (!notification) {
+                // If notification not found, remove from array anyway
+                const index = activeNotifications.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    activeNotifications.splice(index, 1);
+                }
+                return;
             }
             
+            const index = activeNotifications.findIndex(n => n.id === id);
+            if (index === -1) {
+                // Not in array but exists in DOM, remove it anyway
+                notification.remove();
+                return;
+            }
+            
+            // Clear timeout if exists
+            if (notification.dataset.timeoutId) {
+                clearTimeout(parseInt(notification.dataset.timeoutId));
+                delete notification.dataset.timeoutId;
+            }
+            
+            // Remove from array first to prevent double removal
+            activeNotifications.splice(index, 1);
+            
+            // Animate out
             notification.style.opacity = '0';
             notification.style.transform = 'translateX(100%)';
             
+            // Remove from DOM after animation
             setTimeout(() => {
-                notification.remove();
-                activeNotifications.splice(index, 1);
+                if (notification && notification.parentNode) {
+                    notification.remove();
+                }
             }, 300);
         }
 
@@ -808,20 +839,27 @@ flowchart TD
             `;
             
             const cardsContainer = document.getElementById('intent-cards');
-            cardsContainer.innerHTML = '';
+            cardsContainer.innerHTML = '<div class="col-span-full text-center py-8"><div class="inline-flex items-center text-gray-600"><svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Checking page status...</div></div>';
             
-            // Check status for all intents
+            // Check status for all intents - wait for all to complete
             const statusChecks = await Promise.all(
                 intents.map(async (intent) => {
                     try {
                         const response = await fetch(`${API_BASE_URL}/api/page-status/${intent.id}`);
+                        if (!response.ok) {
+                            return { intent, generated: false };
+                        }
                         const data = await response.json();
-                        return { intent, generated: data.generated };
-                    } catch {
+                        return { intent, generated: data.generated || false };
+                    } catch (err) {
+                        console.log(`[Status Check] Failed for ${intent.id}:`, err);
                         return { intent, generated: false };
                     }
                 })
             );
+            
+            // Clear loading message
+            cardsContainer.innerHTML = '';
             
             const primaryLighter = hexToRgba(primaryColor, 0.2);
             const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
@@ -907,6 +945,21 @@ flowchart TD
                 return;
             }
             
+            // FIRST: Check if page already exists before generating
+            try {
+                const statusResponse = await fetch(`${API_BASE_URL}/api/page-status/${intentId}`);
+                const statusData = await statusResponse.json();
+                if (statusData.generated) {
+                    // Page already exists, just update the UI and show view button
+                    updateIntentCardToGenerated(intentId, dataPath);
+                    showNotification('Page already exists', 'info', 1500);
+                    return;
+                }
+            } catch (err) {
+                // If status check fails, continue with generation
+                console.log('[Generate] Status check failed, proceeding with generation');
+            }
+            
             isGenerating = true;
             
             // Disable all intent cards
@@ -976,30 +1029,9 @@ flowchart TD
                 const data = await response.json();
                 
                 // Update button to show view + regenerate
-                if (statusDiv) {
-                    statusDiv.innerHTML = `
-                        <div class="text-green-600">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
-                    `;
-                }
+                updateIntentCardToGenerated(intentId, dataPath);
                 
-                const primaryColor = themeColors.primary || '#3b82f6';
-                const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
-                actionDiv.innerHTML = `
-                    <div class="flex gap-2">
-                        <a href="#${intentId}" class="flex-1 inline-flex items-center justify-center px-4 py-2 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105" style="background-color: ${primaryColor};" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                            View Page →
-                        </a>
-                        <button onclick="regeneratePageFromHome('${intentId}', '${dataPath.replace(/'/g, "\\'")}')" class="px-4 py-2 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105" style="background-color: ${secondaryColor};" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" title="Regenerate">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                        </button>
-                    </div>
-                `;
+                showNotification('Page generated successfully', 'success');
             } catch (error) {
                 actionDiv.innerHTML = `
                     <div class="text-red-600 text-sm p-2">
@@ -1046,6 +1078,59 @@ flowchart TD
                     pageCard.style.cursor = '';
                 }
             });
+        }
+        
+        // Helper function to update intent card to show "View Page" button
+        function updateIntentCardToGenerated(intentId, dataPath) {
+            const actionDiv = document.getElementById(`action-${intentId}`);
+            const statusDiv = document.getElementById(`status-${intentId}`);
+            const card = document.getElementById(`intent-card-${intentId}`);
+            
+            if (!actionDiv) return;
+            
+            const primaryColor = themeColors.primary || '#3b82f6';
+            const secondaryColor = themeColors.secondary || themeColors.accent || primaryColor;
+            
+            // Update status icon
+            if (statusDiv) {
+                statusDiv.innerHTML = `
+                    <div class="text-green-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                `;
+            }
+            
+            // Update action buttons
+            actionDiv.innerHTML = `
+                <div class="flex gap-2">
+                    <a href="#${intentId}" class="flex-1 inline-flex items-center justify-center px-4 py-2 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105" style="background-color: ${primaryColor};" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        View Page →
+                    </a>
+                    <button onclick="regeneratePageFromHome('${intentId}', '${dataPath.replace(/'/g, "\\'")}')" class="px-4 py-2 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105" style="background-color: ${secondaryColor};" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" title="Regenerate">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            // Update card checkmark if it exists
+            if (card) {
+                const iconContainer = card.querySelector('.flex.items-start.justify-between');
+                if (iconContainer) {
+                    // Remove existing checkmark if any
+                    const existingCheckmark = iconContainer.querySelector('.text-green-600:last-child');
+                    if (!existingCheckmark || !existingCheckmark.querySelector('svg')) {
+                        // Add checkmark if it doesn't exist
+                        const checkmark = document.createElement('div');
+                        checkmark.className = 'text-green-600';
+                        checkmark.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                        iconContainer.appendChild(checkmark);
+                    }
+                }
+            }
         }
         
         async function regeneratePageFromHome(intentId, dataPath) {
