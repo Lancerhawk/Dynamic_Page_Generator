@@ -25,7 +25,22 @@ async function initializeRedis(): Promise<void> {
       
       if (redisUrl) {
         try {
-          const Redis = require('ioredis');
+          // Try to require ioredis - check if it's available
+          let Redis;
+          try {
+            Redis = require('ioredis');
+            console.log('[Page Storage] 📦 ioredis module loaded successfully');
+          } catch (requireError: any) {
+            console.error('[Page Storage] ❌ Failed to require ioredis:', requireError.message);
+            console.error('[Page Storage] ❌ Error stack:', requireError.stack);
+            console.error('[Page Storage] ❌ This usually means ioredis is not installed in node_modules');
+            throw new Error(`ioredis module not found: ${requireError.message}`);
+          }
+          
+          if (!Redis) {
+            throw new Error('ioredis module loaded but is undefined');
+          }
+          
           console.log('[Page Storage] 📦 Using ioredis with REDIS_URL');
           
           const redisOptions: any = {
