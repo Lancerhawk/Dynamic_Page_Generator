@@ -1,14 +1,17 @@
 const path = require('path');
 
-// Check if ioredis is available before loading server
-console.log('[API Init] Checking dependencies...');
+// CRITICAL: Require ioredis at top level so Vercel's bundler includes it
+// Vercel's @vercel/node only bundles dependencies that are required at the entry point
+// Without this, backend/dist code can't find ioredis at runtime
 try {
-  const ioredis = require('ioredis');
-  console.log('[API Init] ✅ ioredis is available');
+  require('ioredis');
+  console.log('[API Init] ✅ ioredis required - will be bundled by Vercel');
 } catch (err) {
   console.error('[API Init] ❌ ioredis NOT available:', err.message);
+  console.error('[API Init] Error stack:', err.stack);
   console.error('[API Init] This will cause Redis connection to fail!');
   console.error('[API Init] Make sure ioredis is in api/package.json dependencies');
+  // Don't throw - let the backend code handle the error gracefully
 }
 
 let app;
