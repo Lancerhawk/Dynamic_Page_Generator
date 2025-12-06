@@ -13,6 +13,7 @@ const intent_calculator_1 = require("./intent-calculator");
 const page_generator_1 = require("./page-generator");
 const detail_page_generator_1 = require("./detail-page-generator");
 const page_storage_1 = require("./page-storage");
+const session_storage_1 = require("./session-storage");
 const theme_extractor_1 = require("./theme-extractor");
 const ai_theme_detector_1 = require("./ai-theme-detector");
 const hero_extractor_1 = require("./hero-extractor");
@@ -23,9 +24,6 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const PORT = process.env.PORT || 3000;
-const sessionStore = new Map();
-const intentStore = new Map();
-const themeStore = new Map();
 app.post("/api/connect", async (req, res) => {
     try {
         const { pubToken } = req.body;
@@ -51,9 +49,9 @@ app.post("/api/connect", async (req, res) => {
         }
         const intents = await (0, ai_intent_calculator_1.calculateIntentsWithAI)(siteData);
         const sessionId = `session-${Date.now()}`;
-        sessionStore.set(sessionId, siteData);
-        intentStore.set(sessionId, intents);
-        themeStore.set(sessionId, themeColors);
+        await (0, session_storage_1.setSession)(sessionId, siteData);
+        await (0, session_storage_1.setIntents)(sessionId, intents);
+        await (0, session_storage_1.setThemeColors)(sessionId, themeColors);
         return res.json({
             sessionId,
             siteName,
@@ -76,11 +74,11 @@ app.post("/api/generate-page", async (req, res) => {
         if (!sessionId || !intentId || !dataPath) {
             return res.status(400).json({ error: "Missing required fields" });
         }
-        const siteData = sessionStore.get(sessionId);
+        const siteData = await (0, session_storage_1.getSession)(sessionId);
         if (!siteData) {
             return res.status(404).json({ error: "Session not found" });
         }
-        const existingPage = (0, page_storage_1.getPage)(intentId);
+        const existingPage = await (0, page_storage_1.getPage)(intentId);
         if (existingPage) {
             return res.json({
                 success: true,
@@ -106,11 +104,11 @@ app.post("/api/generate-page", async (req, res) => {
         const siteName = siteData.entries?.navbar?.logo_text ||
             siteData.config?.title ||
             "Website";
-        const storedIntents = intentStore.get(sessionId) || [];
+        const storedIntents = await (0, session_storage_1.getIntents)(sessionId);
         const intent = storedIntents.find((i) => i.id === intentId);
         const intentTitle = intent?.title || intentId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
         const intentDescription = intent?.description || '';
-        const themeColors = themeStore.get(sessionId) || {};
+        const themeColors = await (0, session_storage_1.getThemeColors)(sessionId);
         const pageHtml = await (0, page_generator_1.generatePageForIntent)(intentTitle, intentDescription, {
             ...relevantData,
             _context: {
@@ -120,7 +118,7 @@ app.post("/api/generate-page", async (req, res) => {
                 fullSiteData: siteData
             }
         }, siteName, themeColors, intentId);
-        (0, page_storage_1.storePage)(intentId, pageHtml);
+        await (0, page_storage_1.storePage)(intentId, pageHtml);
         return res.json({
             success: true,
             intentId,
@@ -134,10 +132,10 @@ app.post("/api/generate-page", async (req, res) => {
     }
 });
 // GET /api/page-status/:intentId - Check if page is generated
-app.get("/api/page-status/:intentId", (req, res) => {
+app.get("/api/page-status/:intentId", async (req, res) => {
     try {
         const { intentId } = req.params;
-        const pageHtml = (0, page_storage_1.getPage)(intentId);
+        const pageHtml = await (0, page_storage_1.getPage)(intentId);
         return res.json({ generated: !!pageHtml });
     }
     catch (error) {
@@ -151,7 +149,7 @@ app.post("/api/regenerate-page", async (req, res) => {
         if (!sessionId || !intentId || !dataPath) {
             return res.status(400).json({ error: "Missing required fields" });
         }
-        const siteData = sessionStore.get(sessionId);
+        const siteData = await (0, session_storage_1.getSession)(sessionId);
         if (!siteData) {
             return res.status(404).json({ error: "Session not found" });
         }
@@ -172,11 +170,11 @@ app.post("/api/regenerate-page", async (req, res) => {
         const siteName = siteData.entries?.navbar?.logo_text ||
             siteData.config?.title ||
             "Website";
-        const storedIntents = intentStore.get(sessionId) || [];
+        const storedIntents = await (0, session_storage_1.getIntents)(sessionId);
         const intent = storedIntents.find((i) => i.id === intentId);
         const intentTitle = intent?.title || intentId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
         const intentDescription = intent?.description || '';
-        const themeColors = themeStore.get(sessionId) || {};
+        const themeColors = await (0, session_storage_1.getThemeColors)(sessionId);
         const pageHtml = await (0, page_generator_1.generatePageForIntent)(intentTitle, intentDescription, {
             ...relevantData,
             _context: {
@@ -186,7 +184,7 @@ app.post("/api/regenerate-page", async (req, res) => {
                 fullSiteData: siteData
             }
         }, siteName, themeColors, intentId);
-        (0, page_storage_1.storePage)(intentId, pageHtml);
+        await (0, page_storage_1.storePage)(intentId, pageHtml);
         return res.json({
             success: true,
             intentId,
@@ -200,18 +198,18 @@ app.post("/api/regenerate-page", async (req, res) => {
     }
 });
 // GET /api/session/:sessionId - Check if session exists and get session data
-app.get("/api/session/:sessionId", (req, res) => {
+app.get("/api/session/:sessionId", async (req, res) => {
     try {
         const { sessionId } = req.params;
         if (!sessionId) {
             return res.status(400).json({ error: "Session ID is required" });
         }
-        const siteData = sessionStore.get(sessionId);
+        const siteData = await (0, session_storage_1.getSession)(sessionId);
         if (!siteData) {
             return res.status(404).json({ error: "Session not found" });
         }
-        const intents = intentStore.get(sessionId) || [];
-        const themeColors = themeStore.get(sessionId) || {};
+        const intents = await (0, session_storage_1.getIntents)(sessionId);
+        const themeColors = await (0, session_storage_1.getThemeColors)(sessionId);
         const siteName = siteData.entries?.navbar?.logo_text ||
             siteData.config?.title ||
             "Website";
@@ -231,16 +229,14 @@ app.get("/api/session/:sessionId", (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 });
-app.post("/api/disconnect", (req, res) => {
+app.post("/api/disconnect", async (req, res) => {
     try {
         const { sessionId } = req.body;
         if (!sessionId) {
             return res.status(400).json({ error: "Session ID is required" });
         }
-        sessionStore.delete(sessionId);
-        intentStore.delete(sessionId);
-        themeStore.delete(sessionId);
-        (0, page_storage_1.clearAllPages)();
+        await (0, session_storage_1.clearSession)(sessionId);
+        await (0, page_storage_1.clearAllPages)();
         return res.json({
             success: true,
             message: "Disconnected successfully"
@@ -257,12 +253,12 @@ app.post("/api/generate-detail-page", async (req, res) => {
         if (!sessionId || !intentId || !itemId) {
             return res.status(400).json({ error: "Missing required fields" });
         }
-        const siteData = sessionStore.get(sessionId);
+        const siteData = await (0, session_storage_1.getSession)(sessionId);
         if (!siteData) {
             return res.status(404).json({ error: "Session not found" });
         }
         const detailPageId = `${intentId}-detail-${itemId}`;
-        const existingPage = (0, page_storage_1.getPage)(detailPageId);
+        const existingPage = await (0, page_storage_1.getPage)(detailPageId);
         if (existingPage) {
             return res.json({
                 success: true,
@@ -274,7 +270,7 @@ app.post("/api/generate-detail-page", async (req, res) => {
         const siteName = siteData.entries?.navbar?.logo_text ||
             siteData.config?.title ||
             "Website";
-        const storedIntents = intentStore.get(sessionId) || [];
+        const storedIntents = await (0, session_storage_1.getIntents)(sessionId);
         const intent = storedIntents.find((i) => i.id === intentId);
         const intentTitle = intent?.title || intentId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
         const dataPath = intent?.dataPath || '';
@@ -474,7 +470,7 @@ app.post("/api/generate-detail-page", async (req, res) => {
         // Extract item title from finalItemData
         const itemTitle = finalItemData.title || finalItemData.name || finalItemData.property_title || finalItemData.project_name || finalItemData.skill_name || itemId;
         // Get theme colors
-        const themeColors = themeStore.get(sessionId) || {};
+        const themeColors = await (0, session_storage_1.getThemeColors)(sessionId);
         // Generate detail page HTML
         const detailPageHtml = await (0, detail_page_generator_1.generateDetailPageForItem)(intentTitle, itemTitle, {
             ...finalItemData,
@@ -486,7 +482,7 @@ app.post("/api/generate-detail-page", async (req, res) => {
         }, siteName, themeColors, intentId // Pass intentId for back link
         );
         // Store the detail page
-        (0, page_storage_1.storePage)(detailPageId, detailPageHtml);
+        await (0, page_storage_1.storePage)(detailPageId, detailPageHtml);
         return res.json({
             success: true,
             detailPageId,
@@ -499,10 +495,10 @@ app.post("/api/generate-detail-page", async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 });
-app.get("/api/page/:intentId", (req, res) => {
+app.get("/api/page/:intentId", async (req, res) => {
     try {
         const { intentId } = req.params;
-        const pageHtml = (0, page_storage_1.getPage)(intentId);
+        const pageHtml = await (0, page_storage_1.getPage)(intentId);
         if (!pageHtml) {
             return res.status(404).json({ error: "Page not found" });
         }
