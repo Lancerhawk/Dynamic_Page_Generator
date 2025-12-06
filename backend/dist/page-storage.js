@@ -4,7 +4,7 @@ exports.storePage = storePage;
 exports.getPage = getPage;
 exports.clearAllPages = clearAllPages;
 // Page storage using Redis in production, in-memory Map in development
-let kv = null;
+let redisClient = null;
 let redisConnected = false;
 let redisInitializing = false;
 let redisInitPromise = null;
@@ -14,7 +14,7 @@ async function initializeRedis() {
         return redisInitPromise;
     }
     redisInitPromise = (async () => {
-        if (redisInitializing || kv) {
+        if (redisInitializing || redisClient) {
             return; // Already initializing or initialized
         }
         redisInitializing = true;
@@ -57,26 +57,26 @@ async function initializeRedis() {
                         connectTimeout: 10000,
                         lazyConnect: false
                     };
-                    kv = new Redis(redisUrl, redisOptions);
-                    kv.on('connect', () => {
+                    redisClient = new Redis(redisUrl, redisOptions);
+                    redisClient.on('connect', () => {
                         console.log('[Page Storage] ✅ Redis client connected');
                         redisConnected = true;
                     });
-                    kv.on('ready', () => {
+                    redisClient.on('ready', () => {
                         console.log('[Page Storage] ✅ Redis client ready');
                         redisConnected = true;
                     });
-                    kv.on('error', (err) => {
+                    redisClient.on('error', (err) => {
                         console.error('[Page Storage] ❌ Redis connection error:', err.message);
                         redisConnected = false;
                     });
-                    kv.on('close', () => {
+                    redisClient.on('close', () => {
                         console.log('[Page Storage] ⚠️ Redis connection closed');
                         redisConnected = false;
                     });
                     // Wait for connection with timeout
                     await Promise.race([
-                        kv.ping(),
+                        redisClient.ping(),
                         new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connection timeout')), 5000))
                     ]);
                     console.log('[Page Storage] ✅ Redis PING successful');
@@ -84,7 +84,7 @@ async function initializeRedis() {
                 }
                 catch (error) {
                     console.error('[Page Storage] ❌ Failed to initialize ioredis:', error.message);
-                    kv = null;
+                    redisClient = null;
                     redisConnected = false;
                 }
             }
@@ -97,7 +97,7 @@ async function initializeRedis() {
             console.error('[Page Storage] ⚠️ Redis initialization failed:', error.message);
             console.error('[Page Storage] Error stack:', error.stack);
             redisConnected = false;
-            kv = null;
+            redisClient = null;
         }
         finally {
             redisInitializing = false;
@@ -121,17 +121,17 @@ async function storePage(intentId, html) {
         timestamp: Date.now()
     };
     // Check actual Redis connection status (not just flag)
-    const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
-    console.log('[storePage] Storing page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
+    const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
+    console.log('[storePage] Storing page:', key, 'redisClient exists:', !!redisClient, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
     // ALWAYS write to memory as backup (even if Redis is available)
     memoryPageStore.set(intentId, pageData);
     console.log('[storePage] Stored in memory as backup');
     // Also write to Redis if available - try even if flag says no (connection might be ready)
-    if (kv && isRedisReady) {
+    if (redisClient && isRedisReady) {
         try {
             // Verify connection with ping first
-            await kv.ping();
-            const result = await kv.set(key, JSON.stringify(pageData), 'EX', PAGE_TTL);
+            await redisClient.ping();
+            const result = await redisClient.set(key, JSON.stringify(pageData), 'EX', PAGE_TTL);
             console.log('[storePage] Redis set result:', result);
             redisConnected = true; // Update flag on success
         }
@@ -150,14 +150,14 @@ async function getPage(intentId) {
     await initializeRedis();
     const key = `page:${intentId}`;
     // Check actual Redis connection status (not just flag)
-    const isRedisReady = kv && (kv.status === 'ready' || kv.status === 'connect' || redisConnected);
-    console.log('[getPage] Fetching page:', key, 'kv exists:', !!kv, 'redisConnected:', redisConnected, 'status:', kv?.status, 'isRedisReady:', isRedisReady);
+    const isRedisReady = redisClient && (redisClient.status === 'ready' || redisClient.status === 'connect' || redisConnected);
+    console.log('[getPage] Fetching page:', key, 'redisClient exists:', !!redisClient, 'redisConnected:', redisConnected, 'status:', redisClient?.status, 'isRedisReady:', isRedisReady);
     // Try Redis first if available - try even if flag says no (connection might be ready)
-    if (kv && isRedisReady) {
+    if (redisClient && isRedisReady) {
         try {
             // Verify connection with ping first
-            await kv.ping();
-            const data = await kv.get(key);
+            await redisClient.ping();
+            const data = await redisClient.get(key);
             console.log('[getPage] Redis get result:', data ? 'Found data' : 'No data');
             if (data) {
                 const pageData = typeof data === 'string' ? JSON.parse(data) : data;
@@ -180,7 +180,7 @@ async function getPage(intentId) {
 }
 async function clearAllPages() {
     await initializeRedis();
-    if (kv && redisConnected) {
+    if (redisClient && redisConnected) {
         try {
             // Note: We can't easily delete all pages in Redis without tracking keys
             // Pages will expire on their own with TTL
