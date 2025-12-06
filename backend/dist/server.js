@@ -575,23 +575,33 @@ app.get("/api/page/:intentId", async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 });
-// Diagnostic endpoint to check KV setup
-app.get("/api/debug/kv-status", (req, res) => {
+// Diagnostic endpoint to check Redis setup
+app.get("/api/debug/kv-status", async (req, res) => {
     try {
         const envVars = {
             REDIS_URL: process.env.REDIS_URL ? '✅ Set' : '❌ Not set',
-            KV_REST_API_URL: process.env.KV_REST_API_URL ? '✅ Set' : '❌ Not set',
-            KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN ? '✅ Set' : '❌ Not set',
-            KV_URL: process.env.KV_URL ? '✅ Set' : '❌ Not set',
-            KV_TOKEN: process.env.KV_TOKEN ? '✅ Set' : '❌ Not set',
         };
+        // Test Redis connection if available
+        let redisTest = 'Not tested';
+        if (process.env.REDIS_URL) {
+            try {
+                const Redis = require('ioredis');
+                const testClient = new Redis(process.env.REDIS_URL);
+                await testClient.ping();
+                redisTest = '✅ Connected';
+                testClient.disconnect();
+            }
+            catch (err) {
+                redisTest = `❌ Failed: ${err.message}`;
+            }
+        }
         return res.json({
             environment: process.env.NODE_ENV || 'development',
             vercel: !!process.env.VERCEL,
             envVars: envVars,
             usingRedis: !!process.env.REDIS_URL,
-            usingVercelKV: !!(process.env.KV_REST_API_URL || process.env.KV_URL),
-            message: 'REDIS_URL is used for Vercel Redis, KV_REST_API_URL for Vercel KV'
+            redisTest: redisTest,
+            message: 'REDIS_URL is used for Vercel Redis storage'
         });
     }
     catch (error) {
