@@ -26,6 +26,29 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.path}`, {
+    url: req.url,
+    originalUrl: req.originalUrl,
+    baseUrl: req.baseUrl,
+    headers: {
+      'user-agent': req.get('user-agent')?.substring(0, 50)
+    }
+  });
+  next();
+});
+
+// Test endpoint to verify routing works
+app.get("/api/test", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "API routing works!",
+    path: req.path,
+    method: req.method
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.post("/api/connect", async (req, res) => {
@@ -639,9 +662,23 @@ if (process.env.VERCEL) {
   frontendPath = path.join(__dirname, "../../frontend");
 }
 
-app.use(express.static(frontendPath));
+// Serve static files from frontend (but only for non-API routes)
+app.use((req, res, next) => {
+  // Skip static file serving for API routes
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  express.static(frontendPath)(req, res, next);
+});
 
-app.get("*", (req, res) => {
+// Catch-all route for frontend (SPA routing) - must be last
+// Only match non-API routes
+app.get("*", (req, res, next) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: "API route not found", path: req.path });
+  }
+  
   const indexPath = path.join(frontendPath, "index.html");
   res.sendFile(indexPath, (err) => {
     if (err) {
