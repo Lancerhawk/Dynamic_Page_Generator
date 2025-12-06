@@ -49,6 +49,36 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// List all registered routes for debugging
+app.get("/api/debug/routes", (req, res) => {
+  const routes: any[] = [];
+  app._router?.stack?.forEach((middleware: any) => {
+    if (middleware.route) {
+      const methods = Object.keys(middleware.route.methods);
+      routes.push({
+        path: middleware.route.path,
+        methods: methods
+      });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack?.forEach((handler: any) => {
+        if (handler.route) {
+          const methods = Object.keys(handler.route.methods);
+          routes.push({
+            path: handler.route.path,
+            methods: methods
+          });
+        }
+      });
+    }
+  });
+  
+  res.json({
+    routes: routes,
+    total: routes.length,
+    message: 'Registered routes'
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.post("/api/connect", async (req, res) => {
@@ -83,9 +113,20 @@ app.post("/api/connect", async (req, res) => {
     const intents = await calculateIntentsWithAI(siteData);
     
     const sessionId = `session-${Date.now()}`;
+    console.log('[Connect] Creating session:', sessionId);
+    
     await setSession(sessionId, siteData);
+    console.log('[Connect] Session saved:', sessionId);
+    
     await setIntents(sessionId, intents);
+    console.log('[Connect] Intents saved:', sessionId, intents.length);
+    
     await setThemeColors(sessionId, themeColors);
+    console.log('[Connect] Theme colors saved:', sessionId);
+    
+    // Verify session was saved
+    const verifySession = await getSession(sessionId);
+    console.log('[Connect] Session verification:', verifySession ? '✅ Saved successfully' : '❌ Failed to save');
     
     return res.json({
       sessionId,
@@ -107,13 +148,20 @@ app.post("/api/generate-page", async (req, res) => {
   try {
     const { sessionId, intentId, dataPath } = req.body;
     
+    console.log('[Generate Page] Request received:', { sessionId, intentId, dataPath });
+    
     if (!sessionId || !intentId || !dataPath) {
+      console.log('[Generate Page] Missing fields:', { sessionId: !!sessionId, intentId: !!intentId, dataPath: !!dataPath });
       return res.status(400).json({ error: "Missing required fields" });
     }
     
+    console.log('[Generate Page] Fetching session:', sessionId);
     const siteData = await getSession(sessionId);
+    console.log('[Generate Page] Session fetch result:', siteData ? 'Found' : 'Not found');
+    
     if (!siteData) {
-      return res.status(404).json({ error: "Session not found" });
+      console.error('[Generate Page] Session not found for:', sessionId);
+      return res.status(404).json({ error: "Session not found", sessionId });
     }
     
     const existingPage = await getPage(intentId);
@@ -274,13 +322,19 @@ app.get("/api/session/:sessionId", async (req, res) => {
   try {
     const { sessionId } = req.params;
     
+    console.log('[Get Session] Request for:', sessionId);
+    
     if (!sessionId) {
       return res.status(400).json({ error: "Session ID is required" });
     }
     
+    console.log('[Get Session] Fetching from storage:', sessionId);
     const siteData = await getSession(sessionId);
+    console.log('[Get Session] Result:', siteData ? 'Found' : 'Not found');
+    
     if (!siteData) {
-      return res.status(404).json({ error: "Session not found" });
+      console.error('[Get Session] Session not found:', sessionId);
+      return res.status(404).json({ error: "Session not found", sessionId });
     }
     
     const intents = await getIntents(sessionId);

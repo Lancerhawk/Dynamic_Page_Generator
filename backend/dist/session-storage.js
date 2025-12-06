@@ -28,7 +28,10 @@ try {
         try {
             const Redis = require('ioredis');
             console.log('📦 Using ioredis with REDIS_URL');
-            kv = new Redis(redisUrl, {
+            console.log('📦 Redis URL format:', redisUrl.substring(0, 20) + '...' + redisUrl.substring(redisUrl.length - 10));
+            // Parse Redis URL to extract connection options
+            // Format: redis://default:password@host:port
+            const redisOptions = {
                 maxRetriesPerRequest: 3,
                 retryStrategy: (times) => {
                     const delay = Math.min(times * 50, 2000);
@@ -40,24 +43,40 @@ try {
                         return true;
                     }
                     return false;
-                }
-            });
-            // Test connection
-            kv.ping().then(() => {
-                console.log('✅ Redis connection successful (PING)');
-            }).catch((err) => {
-                console.log('⚠️ Redis PING test failed:', err.message);
-            });
+                },
+                // Enable ready check
+                enableReadyCheck: true,
+                // Connection timeout
+                connectTimeout: 10000,
+                // Lazy connect - don't connect immediately
+                lazyConnect: false
+            };
+            kv = new Redis(redisUrl, redisOptions);
             // Handle connection events
             kv.on('connect', () => {
                 console.log('✅ Redis client connected');
             });
+            kv.on('ready', () => {
+                console.log('✅ Redis client ready');
+            });
             kv.on('error', (err) => {
                 console.error('❌ Redis connection error:', err.message);
+                console.error('❌ Redis error stack:', err.stack);
+            });
+            kv.on('close', () => {
+                console.log('⚠️ Redis connection closed');
+            });
+            // Test connection immediately
+            kv.ping().then((result) => {
+                console.log('✅ Redis PING successful:', result);
+            }).catch((err) => {
+                console.error('❌ Redis PING failed:', err.message);
+                console.error('❌ Redis PING error stack:', err.stack);
             });
         }
         catch (error) {
-            console.log('⚠️ Failed to initialize ioredis:', error.message);
+            console.error('❌ Failed to initialize ioredis:', error.message);
+            console.error('❌ ioredis error stack:', error.stack);
         }
     }
     // Priority 2: Use Vercel KV (@vercel/kv)
@@ -99,17 +118,22 @@ const memoryIntentStore = new Map();
 const memoryThemeStore = new Map();
 const SESSION_TTL = 60 * 60 * 24; // 24 hours in seconds
 async function setSession(sessionId, siteData) {
+    const key = `session:${sessionId}`;
+    console.log('[setSession] Storing session:', key, 'Using:', kv ? 'Redis/KV' : 'Memory');
     if (kv) {
         try {
             // ioredis uses 'EX' as third parameter, @vercel/kv uses { ex: ttl }
             if (kv.set && typeof kv.set === 'function') {
                 // Try ioredis style first (EX parameter)
                 try {
-                    await kv.set(`session:${sessionId}`, JSON.stringify(siteData), 'EX', SESSION_TTL);
+                    const result = await kv.set(key, JSON.stringify(siteData), 'EX', SESSION_TTL);
+                    console.log('[setSession] Redis set result (ioredis):', result);
                 }
-                catch {
+                catch (err) {
+                    console.log('[setSession] ioredis style failed, trying @vercel/kv style:', err.message);
                     // Fallback to @vercel/kv style
-                    await kv.set(`session:${sessionId}`, JSON.stringify(siteData), { ex: SESSION_TTL });
+                    const result = await kv.set(key, JSON.stringify(siteData), { ex: SESSION_TTL });
+                    console.log('[setSession] Redis set result (@vercel/kv):', result);
                 }
             }
             else {
@@ -117,29 +141,43 @@ async function setSession(sessionId, siteData) {
             }
         }
         catch (error) {
-            console.error('KV setSession error:', error.message);
+            console.error('[setSession] KV error:', error.message, error.stack);
             // Fallback to memory on error
+            console.log('[setSession] Falling back to memory storage');
             memoryStore.set(sessionId, siteData);
         }
     }
     else {
+        console.log('[setSession] Using memory storage (no Redis/KV)');
         memoryStore.set(sessionId, siteData);
     }
 }
 async function getSession(sessionId) {
+    const key = `session:${sessionId}`;
+    console.log('[getSession] Fetching:', key, 'Using:', kv ? 'Redis/KV' : 'Memory');
     if (kv) {
         try {
-            const data = await kv.get(`session:${sessionId}`);
-            return data ? (typeof data === 'string' ? JSON.parse(data) : data) : null;
+            const data = await kv.get(key);
+            console.log('[getSession] Redis get result:', data ? 'Found data' : 'No data', typeof data);
+            if (data) {
+                const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+                console.log('[getSession] Parsed successfully, keys:', Object.keys(parsed).slice(0, 5));
+                return parsed;
+            }
+            console.log('[getSession] No data in Redis, checking memory fallback');
+            return memoryStore.get(sessionId) || null;
         }
         catch (error) {
-            console.error('KV getSession error:', error.message);
+            console.error('[getSession] KV error:', error.message, error.stack);
             // Fallback to memory on error
+            console.log('[getSession] Falling back to memory storage');
             return memoryStore.get(sessionId) || null;
         }
     }
     else {
-        return memoryStore.get(sessionId) || null;
+        const memoryData = memoryStore.get(sessionId);
+        console.log('[getSession] Memory result:', memoryData ? 'Found' : 'Not found');
+        return memoryData || null;
     }
 }
 async function deleteSession(sessionId) {
