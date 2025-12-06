@@ -563,7 +563,7 @@ flowchart TD
             
             try {
                 // Check if session is still valid
-                const response = await fetch(`http://localhost:3000/api/session/${storedSessionId}`);
+                const response = await fetch(`${API_BASE_URL}/api/session/${storedSessionId}`);
                 
                 if (!response.ok) {
                     // Session not found or invalid, clear and show connect screen
@@ -1424,7 +1424,7 @@ flowchart TD
             }
             
             try {
-                const response = await fetch('http://localhost:3000/api/disconnect', {
+                const response = await fetch(`${API_BASE_URL}/api/disconnect`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ sessionId })

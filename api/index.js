@@ -6,26 +6,16 @@ try {
   console.log('Loading server from:', serverPath);
   app = require(serverPath);
   console.log('Server loaded successfully');
+  
+  // Verify app is an Express app
+  if (!app || typeof app !== 'function') {
+    throw new Error('Server export is not a function. Got: ' + typeof app);
+  }
 } catch (error) {
   console.error('Failed to load server:', error);
   console.error('Error stack:', error.stack);
   throw error;
 }
 
-module.exports = async (req, res) => {
-  try {
-    if (!app) {
-      throw new Error('Express app not loaded');
-    }
-    return app(req, res);
-  } catch (error) {
-    console.error('Serverless function error:', error);
-    console.error('Error stack:', error.stack);
-    if (!res.headersSent) {
-      res.status(500).json({ 
-        error: 'Internal server error',
-        message: error.message 
-      });
-    }
-  }
-};
+// Export the Express app directly - Vercel's @vercel/node handles it
+module.exports = app;
