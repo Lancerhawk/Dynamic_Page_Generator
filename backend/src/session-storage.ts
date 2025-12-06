@@ -71,9 +71,18 @@ async function initializeRedis(): Promise<void> {
       if (redisUrl) {
         try {
           // Try to require ioredis - check if it's available
+          // First try global (set by api/index.js), then try require
           let Redis;
           try {
-            Redis = require('ioredis');
+            // Try global first (set by api/index.js for Vercel)
+            if (typeof global !== 'undefined' && (global as any).ioredis) {
+              Redis = (global as any).ioredis;
+              console.log('📦 [initializeRedis] ioredis loaded from global (Vercel bundled)');
+            } else {
+              // Fallback to normal require
+              Redis = require('ioredis');
+              console.log('📦 [initializeRedis] ioredis module loaded via require');
+            }
             console.log('📦 [initializeRedis] ioredis module loaded successfully');
           } catch (requireError: any) {
             console.error('❌ [initializeRedis] Failed to require ioredis:', requireError.message);

@@ -1,17 +1,37 @@
 const path = require('path');
 
-// CRITICAL: Require ioredis at top level so Vercel's bundler includes it
-// Vercel's @vercel/node only bundles dependencies that are required at the entry point
-// Without this, backend/dist code can't find ioredis at runtime
+// CRITICAL: Require and USE ioredis so Vercel's bundler includes it
+// Vercel's @vercel/node only bundles dependencies that are actually used
+// We also make it globally available so backend/dist code can access it
+let ioredisModule;
 try {
-  require('ioredis');
-  console.log('[API Init] ✅ ioredis required - will be bundled by Vercel');
+  ioredisModule = require('ioredis');
+  
+  // Make it available globally so backend/dist code can access it
+  // This is needed because Vercel bundles dependencies, and backend/dist requires it
+  if (typeof global !== 'undefined') {
+    global.ioredis = ioredisModule;
+  }
+  
+  // Actually USE it (not just require) so Vercel's bundler includes it
+  // Create a dummy instance to prevent tree-shaking
+  if (ioredisModule && typeof ioredisModule === 'function') {
+    // Just reference the constructor to ensure bundler includes it
+    const _Redis = ioredisModule;
+    // This ensures the module is actually used, not just required
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[API Init] ioredis constructor available:', typeof _Redis);
+    }
+  }
+  
+  console.log('[API Init] ✅ ioredis required, used, and made available globally');
+  console.log('[API Init] ioredis type:', typeof ioredisModule);
 } catch (err) {
   console.error('[API Init] ❌ ioredis NOT available:', err.message);
   console.error('[API Init] Error stack:', err.stack);
   console.error('[API Init] This will cause Redis connection to fail!');
   console.error('[API Init] Make sure ioredis is in api/package.json dependencies');
-  // Don't throw - let the backend code handle the error gracefully
+  throw err; // Throw here so deployment fails if ioredis is missing
 }
 
 let app;
