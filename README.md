@@ -1,5 +1,6 @@
 # Dynamic CMS Page Generator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 A dynamic, AI-powered single-page application (SPA) that generates pages on-demand based on user intent from SleekCMS data. This is NOT a static website generator - it's a dynamic content system with hash-based routing.
 
 ## Features
